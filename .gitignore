@@ -1,1 +1,5 @@
 /.direnv/
+bazel-bazel-experiments
+bazel-bin
+bazel-out
+bazel-testlogs

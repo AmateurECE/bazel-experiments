@@ -16,8 +16,12 @@
           inherit system;
         };
       in {
-        default = pkgs.mkShell {
-          packages = with pkgs; [ bazel ];
+        default = with pkgs; mkShell {
+          packages = [ bazel ];
+          # Needed to allow ld-linux.so to locate shared libraries installed
+          # by nix packages linked to by executables that are compiled for
+          # the host
+          LD_LIBRARY_PATH = "${stdenv.cc.cc.lib}/lib";
         };
       }
     );
