@@ -14,15 +14,27 @@
     devShells = forAllSystems(system:
       let pkgs = import nixpkgs {
           inherit system;
+          crossSystem = {
+            config = "arm-none-eabi";
+            libc = "newlib";
+            gcc = {
+              cpu = "cortex-m4";
+              fpu = "fpv4-sp-d16";
+            };
+          };
         };
       in {
-        default = with pkgs; mkShell {
-          packages = [ bazel ];
-          # Needed to allow ld-linux.so to locate shared libraries installed
-          # by nix packages linked to by executables that are compiled for
-          # the host
-          LD_LIBRARY_PATH = "${stdenv.cc.cc.lib}/lib";
-        };
+        default = pkgs.callPackage(
+          {}: pkgs.mkShell ({
+            nativeBuildInputs = with pkgs.pkgsBuildHost; [ bazel ];
+            buildInputs = with pkgs.pkgsBuildTarget; [ gcc ];
+
+            # Needed to allow ld-linux.so to locate shared libraries installed
+            # by nix packages linked to by executables that are compiled for
+            # the host
+            LD_LIBRARY_PATH = "${pkgs.stdenv.cc.cc.lib}/lib";
+          })
+        ) {};
       }
     );
   };
