@@ -1,5 +1,6 @@
-#include <iostream>
-
 int main() {
-  std::cout << "Hello, world!\n";
+  volatile int hello = 0;
+  while (1) {
+    __asm volatile ("nop");
+  }
 }
