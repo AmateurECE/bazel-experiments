@@ -1,0 +1,3 @@
+# Otherwise, Bazel will attempt to build for the local platform. See:
+# https://bazel.build/extending/platforms#specifying-build-platform
+build --platforms=//platforms:stm32g4
