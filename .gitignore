@@ -1,3 +1,4 @@
+/.conan/
 /.direnv/
 bazel-bazel-experiments
 bazel-bin
