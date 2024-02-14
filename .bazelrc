@@ -1,3 +1,6 @@
 # Otherwise, Bazel will attempt to build for the local platform. See:
 # https://bazel.build/extending/platforms#specifying-build-platform
 build --platforms=//platforms:stm32g4
+
+# Still needed in 6.4.0 to enable bzlmod extensions!
+build --enable_bzlmod=true
