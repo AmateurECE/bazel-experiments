@@ -35,6 +35,7 @@
           {}: pkgs.mkShell ({
             nativeBuildInputs = with pkgs.pkgsBuildHost; [
               bazel
+              conan
               conan-config
             ];
             buildInputs = with pkgs.pkgsBuildTarget; [ gcc ];

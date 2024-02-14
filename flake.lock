@@ -5,11 +5,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1707683262,
-        "narHash": "sha256-sKMDzk9P6BB9MEh/CwK0itROsR1hb9Eae2edWBZMNO8=",
+        "lastModified": 1707703495,
+        "narHash": "sha256-uHYWDVOgWF3avzLVgXLa29kCESp4lq71yjWz7vC4E3g=",
         "owner": "AmateurECE",
         "repo": "metalwork",
-        "rev": "8f6f47e1abc6140a4f5a1259674eff6410076ce3",
+        "rev": "bca48f296bd3433c7f14567f59ad9489785bd8e6",
         "type": "github"
       },
       "original": {
@@ -36,11 +36,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1707546158,
-        "narHash": "sha256-nYYJTpzfPMDxI8mzhQsYjIUX+grorqjKEU9Np6Xwy/0=",
+        "lastModified": 1707689078,
+        "narHash": "sha256-UUGmRa84ZJHpGZ1WZEBEUOzaPOWG8LZ0yPg1pdDF/yM=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "d934204a0f8d9198e1e4515dd6fec76a139c87f0",
+        "rev": "f9d39fb9aff0efee4a3d5f4a6d7c17701d38a1d8",
         "type": "github"
       },
       "original": {
