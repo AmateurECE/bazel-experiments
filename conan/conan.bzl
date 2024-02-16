@@ -1,10 +1,3 @@
-def _array(array):
-  return ",".join(['"{}"'.format(a) for a in array])
-
-def _glob_headers(array):
-  # TODO: .hpp headers?
-  return _array(["{}/**/*.h".format(a) for a in array])
-
 def _conan(repository_ctx, args):
   conan = repository_ctx.which("conan")
   if conan == None:
@@ -21,30 +14,22 @@ def _conan(repository_ctx, args):
 
 def _conan_config_install(repository_ctx, config):
   _conan(repository_ctx, ['config', 'install', config])
+  # Install our custom generator and deployer.
+  repository_ctx.template(
+    ".conan/extensions/generators/bzlmod_generator.py",
+    Label(":bzlmod_generator.py"),
+    executable=False,
+  )
+  repository_ctx.template(
+    ".conan/extensions/deployers/bzlmod_deployer.py",
+    Label(":bzlmod_deployer.py"),
+    executable=False,
+  )
 
 def _conan_install(repository_ctx, requires):
   _conan(
     repository_ctx,
-    ['install', '--requires={}'.format(requires), '-g', 'JsonDeps'],
-  )
-  reference = requires.split("/")
-  return json.decode(repository_ctx.read(reference[0] + '.json'))
-
-def _write_build(repository_ctx, cpp_info):
-  repository_ctx.template(
-    "BUILD",
-    Label(":BUILD.template"),
-    substitutions = {
-      "%{name}": repository_ctx.attr.name,
-      "%{headers}": _glob_headers(cpp_info["includedirs"]),
-      "%{includedirs}": _array(cpp_info["includedirs"]),
-      "%{cflags}": _array(cpp_info["cflags"]),
-      "%{cxxflags}": _array(cpp_info["cxxflags"]),
-      "%{exelinkflags}": _array(cpp_info["exelinkflags"]),
-      "%{sharedlinkflags}": _array(cpp_info["sharedlinkflags"]),
-      "%{libdirs}": _array(cpp_info["libdirs"]),
-    },
-    executable = False,
+    ['install', '--requires={}'.format(requires), '-g', 'Bzlmod', '-d', 'bzlmod_deployer'],
   )
 
 def _conan_cache_impl(repository_ctx):
@@ -57,8 +42,9 @@ def _conan_cache_impl(repository_ctx):
     _conan_config_install(repository_ctx, location)
 
   for package in repository_ctx.attr.requires:
-    cpp_info = _conan_install(repository_ctx, package)
-    _write_build(repository_ctx, cpp_info)
+    _conan_install(repository_ctx, package)
+
+  repository_ctx.file('BUILD.bazel', executable=False)
 
 conan_cache = repository_rule(
   implementation = _conan_cache_impl,
