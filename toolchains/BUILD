@@ -12,7 +12,7 @@ cc_toolchain(
   all_files = ":empty",
   compiler_files = ":empty",
   dwp_files = ":empty",
-  linker_files = "//libc:stm32g4-polyfill",
+  linker_files = "@conan//stm32mp1:c_polyfill",
   objcopy_files = ":empty",
   strip_files = ":empty",
   supports_param_files = 0,

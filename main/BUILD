@@ -5,7 +5,7 @@ cc_binary(
   ],
   linkopts = ["-T", "$(location :STM32G474RETX_FLASH.ld)"],
   deps = [
-    "//libc:stm32g4-polyfill",
+    "@conan//stm32mp1:c_polyfill",
     ":STM32G474RETX_FLASH.ld",
   ],
 )

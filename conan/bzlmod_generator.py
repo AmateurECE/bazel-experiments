@@ -24,6 +24,10 @@ def stringify(item):
     return "\"" + item + "\""
 
 
+def local_target(name):
+    return ":" + name
+
+
 class Component:
     def __init__(self, package_folder, name, cpp_info):
         self.folder = package_folder
@@ -31,9 +35,14 @@ class Component:
         self.cpp_info = cpp_info
 
     def generate_bazel(self):
-        libnames = [stringify("//:" + self.libname(lib))
+        libnames = [stringify(local_target(self.libname(lib)))
                     for lib in self.cpp_info.libs]
-        libs = [self.cc_import(lib) for lib in self.cpp_info.libs]
+        libs = [self.cc_import_lib(lib) for lib in self.cpp_info.libs]
+        if self.cpp_info.objects:
+            libs.append(self.cc_import_objects(self.name,
+                                               self.cpp_info.objects))
+            libnames.append(stringify(
+                local_target(self.objectname(self.name))))
         document = "\n".join(libs)
         return document + "\n" + self.cc_library(libnames)
 
@@ -41,6 +50,11 @@ class Component:
         """Return a Bazel target name for a cc_import given its library name
         (e.g., the name passed to pkg-config --libs)"""
         return f'lib{lib}'
+
+    def objectname(self, lib):
+        """Return the name of the object library generated for this
+        component."""
+        return f'{lib}_obj'
 
     def find_headers(self):
         headers = []
@@ -61,7 +75,7 @@ class Component:
             ")\n"
         )
 
-    def cc_import(self, lib):
+    def cc_import_lib(self, lib):
         path = find_first_file_in_path_list(
             f'lib{lib}.a', self.cpp_info.libdirs)
         library_type = "static"
@@ -77,6 +91,17 @@ class Component:
             "cc_import(\n"
             f"    name = {stringify(self.libname(lib))},\n"
             f"    {library_type}_library = {stringify(path)},\n"
+            ")\n"
+        )
+
+    def cc_import_objects(self, lib, objects):
+        object_files = ",".join([stringify(relativize_path(self.folder, o))
+                                for o in objects])
+        return (
+            "cc_library(\n"
+            f"    name = {stringify(self.objectname(lib))},\n"
+            "    alwayslink = True,\n"
+            f"    srcs = [{object_files}],\n"
             ")\n"
         )
 
