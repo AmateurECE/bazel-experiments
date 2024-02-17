@@ -1,6 +1,12 @@
-load("//:kernel.bzl", "kernel")
+load("//:kernel.bzl", "kernel_configuration")
+load("//:kernel.bzl", "kernel_headers")
 
-kernel(
+kernel_configuration(
   name = "kernel",
   srcs = ["@linux//:sources"],
+)
+
+kernel_headers(
+  name = "headers",
+  cfg = ":kernel",
 )

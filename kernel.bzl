@@ -1,3 +1,6 @@
+# TODO: Use rules_cc?
+# load("@rules_cc//cc:defs.bzl", "cc_common")
+
 def detect_root(sources):
   """Detect the topmost root directory of a collection of sources.
   Implementation taken from rules_foreign_cc"""
@@ -28,6 +31,8 @@ def _kernel_source_archive_impl(repository_ctx):
     "    visibility = [\"//visibility:public\"],\n" +
     ")\n"
   ), executable=False)
+  # TODO: Try to move this into execroot (working directory for all actions)?
+  # This will allow us to genericize this source rule later.
   repository_ctx.file("run-kbuild.sh", content=(
     "#!/bin/sh\n" +
     "set -x\n" +
@@ -53,7 +58,7 @@ kernel_source = module_extension(
 KbuildInfo = provider()
 
 
-def _kernel_impl(ctx):
+def _kernel_configuration_impl(ctx):
   # TODO: Get information from CcToolchain* providers to configure Kbuild?
   root_directory = detect_root(ctx.files.srcs)
   kbuild_info = KbuildInfo(
@@ -81,10 +86,46 @@ def _kernel_impl(ctx):
   ]
 
 
-kernel = rule(
-  implementation = _kernel_impl,
+kernel_configuration = rule(
+  implementation = _kernel_configuration_impl,
   attrs = {
     'srcs': attr.label_list(allow_files = True),
+  },
+  toolchains = ["@rules_cc//cc:toolchain_type"],
+)
+
+
+def _kernel_headers_impl(ctx):
+  """Provides the set of kernel headers to dependents."""
+  root_directory = ctx.attr.cfg[KbuildInfo].root_directory
+  header_install_directory = ctx.actions.declare_directory("usr")
+
+  arguments = ctx.actions.args()
+  arguments.add(header_install_directory.dirname)
+  arguments.add("-C", root_directory)
+  arguments.add("headers_install")
+
+  # TODO: Non-hermetic rule. Uses system GNUMake and default shell env
+  ctx.actions.run(
+    executable = root_directory + "/run-kbuild.sh",
+    arguments = [arguments],
+    inputs = ctx.attr.cfg[DefaultInfo].files,
+    outputs = [header_install_directory],
+    use_default_shell_env = True,
+  )
+  return [
+    CcInfo(
+      compilation_context = cc_common.create_compilation_context(
+        system_includes = depset([header_install_directory.path]),
+      )
+    )
+  ]
+
+
+kernel_headers = rule(
+  implementation = _kernel_headers_impl,
+  attrs = {
+    'cfg': attr.label(),
   },
   toolchains = ["@rules_cc//cc:toolchain_type"],
 )
