@@ -3,10 +3,10 @@
 # https://bazel.build/rules/lib/globals/workspace#register_toolchains
 register_toolchains("//toolchains:arm_none_eabi")
 
+kernel_source = use_extension("//:kernel.bzl", "kernel_source")
+use_repo(kernel_source, "linux")
+
 conan = use_extension("//conan:conan.bzl", "conan")
-
 conan.config(install_from=".conan")
-
 conan.install(requires="stm32mp1/1.6.0")
-
 use_repo(conan, "conan")

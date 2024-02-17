@@ -1,0 +1,6 @@
+load("//:kernel.bzl", "kernel")
+
+kernel(
+  name = "kernel",
+  srcs = ["@linux//:sources"],
+)
