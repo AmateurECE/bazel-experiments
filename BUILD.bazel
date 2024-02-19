@@ -1,5 +1,6 @@
 load("//:kernel.bzl", "kernel_configuration")
 load("//:kernel.bzl", "kernel_headers")
+load("@rules_foreign_cc//foreign_cc:defs.bzl", "configure_make")
 
 kernel_configuration(
   name = "kernel",
@@ -9,4 +10,17 @@ kernel_configuration(
 kernel_headers(
   name = "headers",
   cfg = ":kernel",
+)
+
+configure_make(
+  name = "glibc",
+  deps = [":headers"],
+  configure_prefix = "",
+  configure_options = [
+    "--host=arm-linux-gnueabihf",
+    "--build=aarch64-linux-gnu",
+    "--with-headers=$(location :headers)",
+    "--without-selinux",
+  ],
+  lib_source = "@glibc//:sources",
 )
