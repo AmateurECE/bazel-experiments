@@ -24,7 +24,7 @@ nixpkgs_cc_configure(
   exec_constraints = [ ],
   target_constraints = [
     "@platforms//os:linux",
-    "@platforms//cpu:armv7",
+    "@platforms//cpu:aarch32",
   ],
 )
 
@@ -36,7 +36,7 @@ nixpkgs_cc_configure(
   exec_constraints = [ ],
   target_constraints = [
     "@platforms//os:none",
-    "@platforms//cpu:armv7-m",
+    "@platforms//cpu:aarch32",
   ],
 )
 

@@ -4,7 +4,7 @@ platform(
   name = "cortex-m4",
   constraint_values = [
     "@platforms//os:none",
-    "@platforms//cpu:armv7-m",
+    "@platforms//cpu:aarch32",
   ],
 )
 
@@ -12,6 +12,6 @@ platform(
   name = "cortex-a7",
   constraint_values = [
     "@platforms//os:linux",
-    "@platforms//cpu:armv7",
+    "@platforms//cpu:aarch32",
   ],
 )

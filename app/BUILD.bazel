@@ -10,6 +10,6 @@ cc_binary(
   ],
   target_compatible_with = [
     "@platforms//os:none",
-    "@platforms//cpu:arm",
+    "@platforms//cpu:aarch32",
   ],
 )

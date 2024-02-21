@@ -15,7 +15,7 @@ cc_binary(
   srcs = ["main.cpp"],
   target_compatible_with = [
     "@platforms//os:linux",
-    # "@platforms//cpu:arm",
+    "@platforms//cpu:aarch32",
   ],
 )
 
