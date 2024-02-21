@@ -37,6 +37,7 @@
               bazel
               conan
               conan-config
+              nix-index
             ];
             buildInputs = with pkgs.pkgsBuildTarget; [ gcc ];
 
