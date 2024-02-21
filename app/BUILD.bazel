@@ -8,4 +8,8 @@ cc_binary(
     "@conan//stm32mp1:c_polyfill",
     ":STM32G474RETX_FLASH.ld",
   ],
+  target_compatible_with = [
+    "@platforms//os:none",
+    "@platforms//cpu:arm",
+  ],
 )

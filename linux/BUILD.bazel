@@ -1,0 +1,21 @@
+load(":kernel.bzl", "kernel_configuration", "kernel_headers")
+
+kernel_configuration(
+  name = "kernel",
+  srcs = ["@linux//:sources"],
+)
+
+kernel_headers(
+  name = "headers",
+  cfg = ":kernel",
+)
+
+cc_binary(
+  name = "init",
+  srcs = ["main.cpp"],
+  target_compatible_with = [
+    "@platforms//os:linux",
+    # "@platforms//cpu:arm",
+  ],
+)
+

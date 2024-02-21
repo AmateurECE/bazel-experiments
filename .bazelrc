@@ -1,6 +1,14 @@
 # Otherwise, Bazel will attempt to build for the local platform. See:
 # https://bazel.build/extending/platforms#specifying-build-platform
-build --platforms=//platforms:stm32g4
+build --platforms=//platforms:cortex-a7
+
+# This flag won't be enabled by default until Bazel 7. See:
+# https://github.com/bazelbuild/bazel/issues/7260
+build --incompatible_enable_cc_toolchain_resolution
+
+# The host platform needs this constraint value enabled in order to use
+# toolchains defined using nixpkgs_cc_configure.
+build --host_platform=@rules_nixpkgs_core//platforms:host
 
 # Still needed in 6.4.0 to enable bzlmod extensions!
 build --enable_bzlmod=true
