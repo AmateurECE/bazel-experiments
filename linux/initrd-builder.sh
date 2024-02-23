@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 while getopts ":o:f:" flag; do
   case "$flag" in
     o) OUTPUT_DIRECTORY=$OPTARG;;
@@ -47,5 +49,5 @@ patchelf --set-interpreter /lib/$(basename $interpreter) $init
 # Stuff into a cpio archive
 (cd $OUTPUT_DIRECTORY && find . ! -path . ! -path ./archive-contents.txt ! -path ./$FILE_NAME) \
   >$OUTPUT_DIRECTORY/archive-contents.txt
-(cd $OUTPUT_DIRECTORY && cpio -o -H newc -R 0:0 | gzip -c) \
+(cd $OUTPUT_DIRECTORY && cpio -o -H newc -R 0:0) \
   <$OUTPUT_DIRECTORY/archive-contents.txt >$FILE_NAME

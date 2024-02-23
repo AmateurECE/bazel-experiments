@@ -117,7 +117,7 @@ def _single_app_cpio_initrd_impl(ctx):
   kernel. Automatically populates libc in the archive, if the application
   links to one, but currently cannot automatically populate other kinds of
   dependencies."""
-  archive = ctx.actions.declare_file("initrd.cpio.gz")
+  archive = ctx.actions.declare_file("initrd.cpio")
 
   args = ctx.actions.args()
   args.add("-o", "builddir")
