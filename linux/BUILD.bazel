@@ -1,14 +1,16 @@
-load(":kernel.bzl",
-  "kernel_configuration", "kernel_headers", "single_app_cpio_initrd")
+load("@rules_cc//cc:defs.bzl", "cc_binary")
+load(":kernel.bzl", "kernel_build", "single_app_cpio_initrd")
 
-kernel_configuration(
-  name = "kernel",
+kernel_build(
+  name = "image",
   srcs = ["@linux//:sources"],
-)
-
-kernel_headers(
-  name = "headers",
-  cfg = ":kernel",
+  defconfig = "multi_v7_defconfig",
+  image = "zImage",
+  dtb = "stm32mp157f-dk2.dtb",
+  initramfs = ':rootfs',
+  # TODO: Should be possible to pull these from CcToolchain?
+  arch = "arm",
+  cross_compile = "armv7l-unknown-linux-gnueabihf-",
 )
 
 cc_binary(

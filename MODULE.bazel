@@ -8,17 +8,10 @@ conan.install(requires="stm32mp1/1.6.0")
 
 sources.archive(
   name = "linux",
-  url='https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.7.4.tar.xz',
-  sha256='f68d9f5ffc0a24f850699b86c8aea8b8687de7384158d5ed3bede37de098d60c',
-  strip_prefix='linux-6.7.4',
-)
-
-sources.archive(
-  name='glibc',
-  url='http://ftp.gnu.org/gnu/glibc/glibc-2.37.tar.xz',
-  sha256='2257eff111a1815d74f46856daaf40b019c1e553156c69d48ba0cbfc1bb91a43',
-  strip_prefix='glibc-2.37',
+  url='https://github.com/STMicroelectronics/linux/archive/b3464dcb76176a9284c524219ae7444a177cf399.tar.gz',
+  sha256='fff18b5d14e648e8b300daebe99f20e61021b245c8413cb7b26e10ad796e3b48',
+  strip_prefix='linux-b3464dcb76176a9284c524219ae7444a177cf399',
 )
 
 use_repo(conan, "conan")
-use_repo(sources, "linux", "glibc")
+use_repo(sources, "linux")

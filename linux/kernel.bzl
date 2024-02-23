@@ -18,95 +18,57 @@ def detect_root(sources):
   return root
 
 
-KbuildInfo = provider()
-
-
-def _kernel_configuration_impl(ctx):
+def _kernel_build_impl(ctx):
   # TODO: Get information from CcToolchain* providers to configure Kbuild?
+  # print(str(ctx.toolchains["@rules_cc//cc:toolchain_type"]))
   root_directory = detect_root(ctx.files.srcs)
   config = ctx.actions.declare_file(".config")
-  builder = ctx.actions.declare_file("run-kbuild.sh")
+  image = ctx.actions.declare_file(ctx.attr.image, sibling=config)
+  dtb = ctx.actions.declare_file(ctx.attr.dtb, sibling=config)
+  outputs = [config, image, dtb]
 
-  arguments = ctx.actions.args()
-  arguments.add(ctx.bin_dir.path)
-  arguments.add("-C", root_directory)
-  arguments.add("defconfig")
+  args = ctx.actions.args()
+  args.add("-C", root_directory)
+  args.add(ctx.attr.defconfig)
 
-  ctx.actions.write(
-    output = builder,
-    content=(
-      "#!/bin/sh\n" +
-      "set -x\n" +
-      "OUTPUT_DIR=$1; shift;\n" +
-      "make O=$PWD/$OUTPUT_DIR $@\n"
-    ),
-    is_executable = True,
-  )
-
-  kbuild_info = KbuildInfo(
-    root_directory = root_directory,
-    srcs = ctx.files.srcs,
-    builder = builder,
-  )
-
-  # TODO: Non-hermetic rule. Uses system GNUMake and default shell env
   ctx.actions.run(
-    executable = builder,
-    arguments = [arguments],
+    mnemonic = "BuildKernel",
+    executable = ctx.executable._builder,
+    arguments = [args],
     inputs = ctx.files.srcs,
-    outputs = [config],
+    outputs = outputs,
     use_default_shell_env = True,
+    env = {
+      'ARCH': ctx.attr.arch,
+      'CROSS_COMPILE': ctx.attr.cross_compile,
+      'OUT_DIR': config.dirname,
+      'IMAGE': ctx.attr.image,
+      'DTB': ctx.attr.dtb,
+      'INITRAMFS_SOURCE': ctx.files.initramfs[0].path,
+    },
   )
 
   return [
-    DefaultInfo(files = depset([config])),
-    kbuild_info,
+    DefaultInfo(files = depset(outputs)),
   ]
 
 
-kernel_configuration = rule(
-  implementation = _kernel_configuration_impl,
+kernel_build = rule(
+  implementation = _kernel_build_impl,
   attrs = {
     'srcs': attr.label_list(allow_files = True),
-  },
-  toolchains = ["@rules_cc//cc:toolchain_type"],
-)
-
-
-def _kernel_headers_impl(ctx):
-  """Provides the set of kernel headers to dependents."""
-  root_directory = ctx.attr.cfg[KbuildInfo].root_directory
-  header_install_directory = ctx.actions.declare_directory("include")
-
-  arguments = ctx.actions.args()
-  arguments.add(ctx.bin_dir.path)
-  arguments.add("-C", root_directory)
-  arguments.add("INSTALL_HDR_PATH=" + header_install_directory.path)
-  arguments.add("headers_install")
-
-  # TODO: Non-hermetic rule. Uses system GNUMake and default shell env
-  ctx.actions.run(
-    executable = ctx.attr.cfg[KbuildInfo].builder,
-    arguments = [arguments],
-    inputs = ctx.files.cfg + ctx.attr.cfg[KbuildInfo].srcs,
-    outputs = [header_install_directory],
-    use_default_shell_env = True,
-  )
-
-  return [
-    DefaultInfo(files = depset([header_install_directory])),
-    CcInfo(
-      compilation_context = cc_common.create_compilation_context(
-        system_includes = depset([header_install_directory.path]),
-      )
-    )
-  ]
-
-
-kernel_headers = rule(
-  implementation = _kernel_headers_impl,
-  attrs = {
-    'cfg': attr.label(),
+    'defconfig': attr.string(),
+    'arch': attr.string(),
+    'cross_compile': attr.string(),
+    'image': attr.string(),
+    'dtb': attr.string(),
+    'initramfs': attr.label(),
+    '_builder': attr.label(
+      default = Label(':kbuild.sh'),
+      cfg = "exec",
+      executable = True,
+      allow_files = True,
+    ),
   },
   toolchains = ["@rules_cc//cc:toolchain_type"],
 )

@@ -6,6 +6,11 @@ build --platforms=//platforms:cortex-a7
 # https://github.com/bazelbuild/bazel/issues/7260
 build --incompatible_enable_cc_toolchain_resolution
 
+# Required so that run actions can use default shell environments AND
+# environment variables set by the action. See:
+# https://bazel.build/rules/lib/builtins/actions.html#run
+build --incompatible_merge_fixed_and_default_shell_env
+
 # The host platform needs this constraint value enabled in order to use
 # toolchains defined using nixpkgs_cc_configure.
 build --host_platform=@rules_nixpkgs_core//platforms:host
