@@ -1,5 +1,4 @@
-# TODO: Use rules_cc?
-# load("@rules_cc//cc:defs.bzl", "cc_common")
+load("@rules_cc//cc:find_cc_toolchain.bzl", "find_cc_toolchain")
 
 def detect_root(sources):
   """Detect the topmost root directory of a collection of sources.
@@ -19,8 +18,7 @@ def detect_root(sources):
 
 
 def _kernel_build_impl(ctx):
-  # TODO: Get information from CcToolchain* providers to configure Kbuild?
-  # print(str(ctx.toolchains["@rules_cc//cc:toolchain_type"]))
+  toolchain = find_cc_toolchain(ctx)
   root_directory = detect_root(ctx.files.srcs)
   config = ctx.actions.declare_file(".config")
   image = ctx.actions.declare_file(ctx.attr.image, sibling=config)
@@ -35,12 +33,19 @@ def _kernel_build_impl(ctx):
     mnemonic = "BuildKernel",
     executable = ctx.executable._builder,
     arguments = [args],
-    inputs = ctx.files.srcs,
+    inputs = ctx.files.srcs + toolchain.all_files.to_list(),
     outputs = outputs,
     use_default_shell_env = True,
     env = {
       'ARCH': ctx.attr.arch,
       'CROSS_COMPILE': ctx.attr.cross_compile,
+      'AR': toolchain.ar_executable,
+      'CC': toolchain.compiler_executable,
+      'LD': toolchain.ld_executable,
+      'NM': toolchain.nm_executable,
+      'OBJCOPY': toolchain.objcopy_executable,
+      'OBJDUMP': toolchain.objdump_executable,
+      'STRIP': toolchain.strip_executable,
       'OUT_DIR': config.dirname,
       'IMAGE': ctx.attr.image,
       'DTB': ctx.attr.dtb,
