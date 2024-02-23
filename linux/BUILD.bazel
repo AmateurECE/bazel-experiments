@@ -1,4 +1,5 @@
-load(":kernel.bzl", "kernel_configuration", "kernel_headers")
+load(":kernel.bzl",
+  "kernel_configuration", "kernel_headers", "single_app_cpio_initrd")
 
 kernel_configuration(
   name = "kernel",
@@ -19,3 +20,7 @@ cc_binary(
   ],
 )
 
+single_app_cpio_initrd(
+  name = "rootfs",
+  init = ":init",
+)
