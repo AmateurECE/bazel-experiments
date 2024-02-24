@@ -10,6 +10,19 @@ kbuild() {
     -C $KDIR $@
 }
 
+patch-config() {
+  local base=$1; shift;
+
+  local IFS=:; set -o noglob
+  for config in $CONFIG; do
+    printf "$config=${!config}\n" >> $B/local.cfg
+  done
+
+  if [[ -f $B/local.cfg ]]; then
+    (cd $B && $KDIR/scripts/kconfig/merge_config.sh -m $base local.cfg)
+  fi
+}
+
 while getopts "C:" flag; do
   case "$flag" in
     C) KDIR=$OPTARG;;
@@ -24,13 +37,19 @@ fi
 
 DEFCONFIG=${@:$OPTIND}
 
-printf "CONFIG_INITRAMFS_SOURCE=\"$INITRAMFS_SOURCE\"\n" > $B/initramfs.cfg
-(cd $B && $KDIR/scripts/kconfig/merge_config.sh -m \
-  initramfs.cfg $KDIR/arch/$ARCH/configs/$DEFCONFIG > .config)
+kbuild $DEFCONFIG
 
+# Patch the configuration from the environment, if necessary
+mv $B/.config $B/default.cfg
+patch-config $B/default.cfg
 kbuild olddefconfig
+
 kbuild -j$(nproc)
 
-install $B/.config -t $OUT_DIR
-install $B/arch/$ARCH/boot/$IMAGE -t $OUT_DIR
-install $B/arch/$ARCH/boot/dts/$DTB -t $OUT_DIR
+# Install the configuration
+install $B/.config $OUT_DIR/$NAME.cfg
+
+IFS=:; set -o noglob
+for artifact in $ARTIFACTS; do
+  install $B/$artifact -t $OUT_DIR
+done

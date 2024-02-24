@@ -20,25 +20,41 @@ def detect_root(sources):
 def _kernel_build_impl(ctx):
   toolchain = find_cc_toolchain(ctx)
   root_directory = detect_root(ctx.files.srcs)
-  config = ctx.actions.declare_file(".config")
+  name = "linux"
+  config = ctx.actions.declare_file(name + ".cfg")
   image = ctx.actions.declare_file(ctx.attr.image, sibling=config)
   dtb = ctx.actions.declare_file(ctx.attr.dtb, sibling=config)
+  artifacts = [
+    "arch/%s/boot/%s" % (ctx.attr.arch, ctx.attr.image),
+    "arch/%s/boot/dts/%s" % (ctx.attr.arch, ctx.attr.dtb),
+  ]
   outputs = [config, image, dtb]
+
+  inputs = ctx.files.srcs + [ctx.file.initramfs] \
+      + toolchain.all_files.to_list()
 
   args = ctx.actions.args()
   args.add("-C", root_directory)
   args.add(ctx.attr.defconfig)
 
+  # TODO: Create a "kernel toolchain" that combines a "kbuild toolchain"
+  # (itself combining a exec & target cc_toolchain, plus the tools to run
+  # kbuild--make, etc.) plus the tools needed to compile the kernel--flex,
+  # bison, bc, etc.
   ctx.actions.run(
-    mnemonic = "BuildKernel",
+    mnemonic = name + "Kbuild",
     executable = ctx.executable._builder,
     arguments = [args],
-    inputs = ctx.files.srcs + toolchain.all_files.to_list(),
+    inputs = inputs,
     outputs = outputs,
     use_default_shell_env = True,
     env = {
+      # Standard kbuild stuff
       'ARCH': ctx.attr.arch,
       'CROSS_COMPILE': ctx.attr.cross_compile,
+
+      # Tools
+      # TODO: This makes target toolchain hermetic, but not host toolchain.
       'AR': toolchain.ar_executable,
       'CC': toolchain.compiler_executable,
       'LD': toolchain.ld_executable,
@@ -46,10 +62,13 @@ def _kernel_build_impl(ctx):
       'OBJCOPY': toolchain.objcopy_executable,
       'OBJDUMP': toolchain.objdump_executable,
       'STRIP': toolchain.strip_executable,
+
+      # Instructions for kbuild.sh
+      'NAME': 'linux',
       'OUT_DIR': config.dirname,
-      'IMAGE': ctx.attr.image,
-      'DTB': ctx.attr.dtb,
-      'INITRAMFS_SOURCE': ctx.files.initramfs[0].path,
+      'ARTIFACTS': ':'.join(artifacts),
+      'CONFIG': 'CONFIG_INITRAMFS_SOURCE',
+      'CONFIG_INITRAMFS_SOURCE': '"%s"' % (ctx.file.initramfs.path),
     },
   )
 
@@ -62,12 +81,12 @@ kernel_build = rule(
   implementation = _kernel_build_impl,
   attrs = {
     'srcs': attr.label_list(allow_files = True),
-    'defconfig': attr.string(),
+    'defconfig': attr.string(mandatory = True),
     'arch': attr.string(),
     'cross_compile': attr.string(),
-    'image': attr.string(),
-    'dtb': attr.string(),
-    'initramfs': attr.label(),
+    'image': attr.string(mandatory = True),
+    'dtb': attr.string(mandatory = True),
+    'initramfs': attr.label(allow_single_file = [".cpio"], mandatory = True),
     '_builder': attr.label(
       default = Label(':kbuild.sh'),
       cfg = "exec",
