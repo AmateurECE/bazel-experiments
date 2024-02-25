@@ -7,7 +7,6 @@ kernel_build(
   defconfig = "multi_v7_defconfig",
   image = "zImage",
   dtb = "stm32mp157f-dk2.dtb",
-  initramfs = ":rootfs",
   # TODO: Should be possible to pull these from CcToolchain?
   arch = "arm",
   cross_compile = "armv7l-unknown-linux-gnueabihf-",
