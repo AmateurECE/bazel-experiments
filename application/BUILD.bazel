@@ -1,8 +1,8 @@
 load("@rules_cc//cc:defs.bzl", "cc_binary")
-load(":kernel.bzl", "kernel_build", "single_app_cpio_initrd")
+load(":defs.bzl", "kernel_build", "single_app_cpio_initrd")
 
 kernel_build(
-  name = "image",
+  name = "linux",
   srcs = ["@linux//:sources"],
   defconfig = "multi_v7_defconfig",
   image = "zImage",
