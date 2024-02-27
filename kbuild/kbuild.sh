@@ -20,6 +20,8 @@ patch-config() {
 
   if [[ -f $B/local.cfg ]]; then
     (cd $B && $KDIR/scripts/kconfig/merge_config.sh -m $base local.cfg)
+  else
+    mv $base $B/.config
   fi
 }
 
