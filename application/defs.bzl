@@ -1,10 +1,13 @@
-load("//kbuild:kbuild.bzl", "kbuild_target", "KbuildInfo")
+load("//kbuild:kbuild.bzl", "kbuild_target", "KbuildToolchainInfo")
 load("@rules_cc//cc:defs.bzl", "cc_common")
 
 
 def _linux_toolchain_impl(ctx):
   """Provide information about kernel build tools to the kbuild rules."""
-  toolchain_info = platform_common.ToolchainInfo()
+  target = ctx.attr.target_cc_toolchain[cc_common.CcToolchainInfo]
+  toolchain_info = platform_common.ToolchainInfo(
+    target_cc_toolchain_info = target,
+  )
   return [toolchain_info]
 
 

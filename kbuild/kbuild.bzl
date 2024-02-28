@@ -1,7 +1,7 @@
 load("@rules_cc//cc:find_cc_toolchain.bzl", "find_cc_toolchain")
 
 
-KbuildInfo = provider()
+KbuildToolchainInfo = provider()
 
 
 def detect_root(sources):
@@ -26,7 +26,7 @@ def _kbuild_target_impl(ctx):
   Creates an action that executes a kbuild configuration and installs some
   generated artifacts to the output directory.
   """
-  toolchain = find_cc_toolchain(ctx)
+  toolchain = ctx.toolchains[":toolchain_type"].target_cc_toolchain_info
   root_directory = detect_root(ctx.files.srcs)
   config = ctx.actions.declare_file(ctx.attr.name + ".cfg")
 
