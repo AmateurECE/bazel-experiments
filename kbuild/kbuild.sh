@@ -37,7 +37,12 @@ else
   B=$PWD/$O
 fi
 
+# Kbuild rules in some repositories (e.g. U-boot) need $HOME to be set for
+# downloading files during the build.
+export HOME=$PWD
+
 DEFCONFIG=${@:$OPTIND}
+ALLTARGET=${@:$OPTIND+1}
 
 kbuild $DEFCONFIG
 
@@ -46,7 +51,7 @@ mv $B/.config $B/default.cfg
 patch-config $B/default.cfg
 kbuild olddefconfig
 
-kbuild -j$(nproc)
+kbuild -j$(nproc) $ALLTARGET
 
 # Install the configuration
 install $B/.config $OUT_DIR/$NAME.cfg

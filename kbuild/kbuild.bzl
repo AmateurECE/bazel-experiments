@@ -37,6 +37,7 @@ def _kbuild_target_impl(ctx):
   args = ctx.actions.args()
   args.add("-C", root_directory)
   args.add(ctx.attr.defconfig)
+  args.add(ctx.attr.all_target)
 
   env = {
     # Standard kbuild stuff
@@ -89,6 +90,7 @@ kbuild_target = rule(
     # Standard kbuild parameters
     'srcs': attr.label_list(allow_files = True),
     'defconfig': attr.string(mandatory = True),
+    'all_target': attr.string(),
     'arch': attr.string(),
     'cross_compile': attr.string(),
 
