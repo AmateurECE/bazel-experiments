@@ -1,6 +1,9 @@
 load("@rules_cc//cc:find_cc_toolchain.bzl", "find_cc_toolchain")
 
 
+KbuildInfo = provider()
+
+
 def detect_root(sources):
   """Detect the topmost root directory of a collection of sources.
   Implementation taken from rules_foreign_cc"""
@@ -107,5 +110,8 @@ kbuild_target = rule(
       allow_files = True,
     ),
   },
-  toolchains = ["@rules_cc//cc:toolchain_type"],
+  toolchains = [
+    "@rules_cc//cc:toolchain_type",
+    ":toolchain_type",
+  ],
 )

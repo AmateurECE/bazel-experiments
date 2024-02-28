@@ -1,5 +1,20 @@
 load("@rules_cc//cc:defs.bzl", "cc_binary")
-load(":defs.bzl", "kernel_build", "single_app_cpio_initrd")
+load(":defs.bzl", "kernel_build", "single_app_cpio_initrd", "linux_toolchain")
+
+linux_toolchain(
+  name = "linux-toolchain-config",
+)
+
+toolchain(
+  name = "linux-toolchain",
+  toolchain = ":linux-toolchain-config",
+  toolchain_type = "//kbuild:toolchain_type",
+  target_compatible_with = [
+    "@platforms//os:linux",
+    "@platforms//cpu:aarch32",
+  ],
+  visibility = ["//visibility:public"],
+)
 
 kernel_build(
   name = "linux",
