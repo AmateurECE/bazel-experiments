@@ -3,7 +3,11 @@ load(":defs.bzl", "kernel_build", "single_app_cpio_initrd", "linux_toolchain")
 
 linux_toolchain(
   name = "linux-toolchain-config",
-  target_cc_toolchain = "@arm_linux_gnu//:cc-compiler-cortex-a7",
+  target_cc_toolchain = "@arm_none_linux_gnueabihf//toolchain:cc_toolchain_linux_aarch64_arm",
+  ld = "@arm_none_linux_gnueabihf_linux_aarch64//:ld",
+  nm = "@arm_none_linux_gnueabihf_linux_aarch64//:nm",
+  objcopy = "@arm_none_linux_gnueabihf_linux_aarch64//:objcopy",
+  objdump = "@arm_none_linux_gnueabihf_linux_aarch64//:objdump",
 )
 
 toolchain(

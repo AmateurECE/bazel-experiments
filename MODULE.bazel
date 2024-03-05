@@ -1,11 +1,30 @@
 bazel_dep(name = "rules_foreign_cc", version = "0.10.1")
 bazel_dep(name = "rules_cc", version = "0.0.9")
 
+git_override(
+    module_name = "arm_gnu_toolchain",
+    remote = "https://github.com/AmateurECE/bazel-arm-gnu-toolchains",
+    commit = "aa3d373bd38e7ab582aab904fbd82087b4bd63b7",
+)
+
+bazel_dep(name = "arm_gnu_toolchain", version = "1.0.0")
+
+arm_toolchain = use_extension("@arm_gnu_toolchain//:extensions.bzl", "arm_toolchain")
+arm_toolchain.arm_none_linux_gnueabihf(version = "13.2.1")
+use_repo(
+    arm_toolchain,
+    "arm_none_linux_gnueabihf",
+    "arm_none_linux_gnueabihf_linux_aarch64",
+)
+
 conan = use_extension("//conan:conan.bzl", "conan")
-sources = use_extension("//:sources.bzl", "sources")
 
 conan.config(install_from=".conan")
 conan.install(requires="stm32mp1/1.6.0")
+
+use_repo(conan, "conan")
+
+sources = use_extension("//:sources.bzl", "sources")
 
 sources.archive(
   name = "linux",
@@ -14,9 +33,9 @@ sources.archive(
   strip_prefix='linux-b3464dcb76176a9284c524219ae7444a177cf399',
 )
 
-use_repo(conan, "conan")
 use_repo(sources, "linux")
 
 register_toolchains(
   "//application:linux-toolchain",
+  "@arm_none_linux_gnueabihf//toolchain:all",
 )

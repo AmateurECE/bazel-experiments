@@ -5,9 +5,9 @@ set -x
 
 kbuild() {
   make O=$B ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE \
-    CC=$CC LD=$LD NM=$NM AR=$AR OBJCOPY=$OBJCOPY STRIP=$STRIP \
-    OBJDUMP=$OBJDUMP \
-    -C $KDIR $@
+    CC=$(realpath $CC) LD=$(realpath $LD) NM=$(realpath $NM) \
+    AR=$(realpath $AR) OBJCOPY=$(realpath $OBJCOPY) STRIP=$(realpath $STRIP) \
+    OBJDUMP=$(realpath $OBJDUMP) -C $KDIR $@
 }
 
 patch-config() {

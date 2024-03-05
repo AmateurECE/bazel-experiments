@@ -11,9 +11,5 @@ build --incompatible_enable_cc_toolchain_resolution
 # https://bazel.build/rules/lib/builtins/actions.html#run
 build --incompatible_merge_fixed_and_default_shell_env
 
-# The host platform needs this constraint value enabled in order to use
-# toolchains defined using nixpkgs_cc_configure.
-build --host_platform=@rules_nixpkgs_core//platforms:host
-
 # Still needed in 6.4.0 to enable bzlmod extensions!
 build --enable_bzlmod=true

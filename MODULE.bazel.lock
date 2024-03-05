@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "f2bbaf94c273941a59ac24caf899ee9475a57bb0f51d09560eff7324f6e90f59",
+  "moduleFileHash": "6ea98e1a5e2f408bdb7ce8654f7825758db8d5e71d495200ba328ae01c235313",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -23,16 +23,48 @@
       "repoName": "",
       "executionPlatformsToRegister": [],
       "toolchainsToRegister": [
-        "//toolchains:arm_none_eabi"
+        "//application:linux-toolchain",
+        "@arm_none_linux_gnueabihf//toolchain:all"
       ],
       "extensionUsages": [
+        {
+          "extensionBzlFile": "@arm_gnu_toolchain//:extensions.bzl",
+          "extensionName": "arm_toolchain",
+          "usingModule": "<root>",
+          "location": {
+            "file": "@@//:MODULE.bazel",
+            "line": 12,
+            "column": 30
+          },
+          "imports": {
+            "arm_none_linux_gnueabihf": "arm_none_linux_gnueabihf",
+            "arm_none_linux_gnueabihf_linux_aarch64": "arm_none_linux_gnueabihf_linux_aarch64"
+          },
+          "devImports": [],
+          "tags": [
+            {
+              "tagName": "arm_none_linux_gnueabihf",
+              "attributeValues": {
+                "version": "13.2.1"
+              },
+              "devDependency": false,
+              "location": {
+                "file": "@@//:MODULE.bazel",
+                "line": 13,
+                "column": 39
+              }
+            }
+          ],
+          "hasDevUseExtension": false,
+          "hasNonDevUseExtension": true
+        },
         {
           "extensionBzlFile": "@//conan:conan.bzl",
           "extensionName": "conan",
           "usingModule": "<root>",
           "location": {
             "file": "@@//:MODULE.bazel",
-            "line": 8,
+            "line": 20,
             "column": 22
           },
           "imports": {
@@ -48,7 +80,7 @@
               "devDependency": false,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 11,
+                "line": 22,
                 "column": 13
               }
             },
@@ -60,7 +92,7 @@
               "devDependency": false,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 12,
+                "line": 23,
                 "column": 14
               }
             }
@@ -74,12 +106,11 @@
           "usingModule": "<root>",
           "location": {
             "file": "@@//:MODULE.bazel",
-            "line": 9,
+            "line": 27,
             "column": 24
           },
           "imports": {
-            "linux": "linux",
-            "glibc": "glibc"
+            "linux": "linux"
           },
           "devImports": [],
           "tags": [
@@ -87,29 +118,14 @@
               "tagName": "archive",
               "attributeValues": {
                 "name": "linux",
-                "url": "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.7.4.tar.xz",
-                "sha256": "f68d9f5ffc0a24f850699b86c8aea8b8687de7384158d5ed3bede37de098d60c",
-                "strip_prefix": "linux-6.7.4"
+                "url": "https://github.com/STMicroelectronics/linux/archive/b3464dcb76176a9284c524219ae7444a177cf399.tar.gz",
+                "sha256": "fff18b5d14e648e8b300daebe99f20e61021b245c8413cb7b26e10ad796e3b48",
+                "strip_prefix": "linux-b3464dcb76176a9284c524219ae7444a177cf399"
               },
               "devDependency": false,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 14,
-                "column": 16
-              }
-            },
-            {
-              "tagName": "archive",
-              "attributeValues": {
-                "name": "glibc",
-                "url": "http://ftp.gnu.org/gnu/glibc/glibc-2.37.tar.xz",
-                "sha256": "2257eff111a1815d74f46856daaf40b019c1e553156c69d48ba0cbfc1bb91a43",
-                "strip_prefix": "glibc-2.37"
-              },
-              "devDependency": false,
-              "location": {
-                "file": "@@//:MODULE.bazel",
-                "line": 21,
+                "line": 29,
                 "column": 16
               }
             }
@@ -120,6 +136,8 @@
       ],
       "deps": {
         "rules_foreign_cc": "rules_foreign_cc@0.10.1",
+        "rules_cc": "rules_cc@0.0.9",
+        "arm_gnu_toolchain": "arm_gnu_toolchain@_",
         "bazel_tools": "bazel_tools@_",
         "local_config_platform": "local_config_platform@_"
       }
@@ -170,7 +188,7 @@
       ],
       "deps": {
         "bazel_skylib": "bazel_skylib@1.3.0",
-        "platforms": "platforms@0.0.7",
+        "platforms": "platforms@0.0.8",
         "rules_python": "rules_python@0.20.0",
         "bazel_tools": "bazel_tools@_",
         "local_config_platform": "local_config_platform@_"
@@ -190,6 +208,121 @@
           },
           "remote_patch_strip": 0
         }
+      }
+    },
+    "rules_cc@0.0.9": {
+      "name": "rules_cc",
+      "version": "0.0.9",
+      "key": "rules_cc@0.0.9",
+      "repoName": "rules_cc",
+      "executionPlatformsToRegister": [],
+      "toolchainsToRegister": [
+        "@local_config_cc_toolchains//:all"
+      ],
+      "extensionUsages": [
+        {
+          "extensionBzlFile": "@bazel_tools//tools/cpp:cc_configure.bzl",
+          "extensionName": "cc_configure_extension",
+          "usingModule": "rules_cc@0.0.9",
+          "location": {
+            "file": "https://bcr.bazel.build/modules/rules_cc/0.0.9/MODULE.bazel",
+            "line": 9,
+            "column": 29
+          },
+          "imports": {
+            "local_config_cc_toolchains": "local_config_cc_toolchains"
+          },
+          "devImports": [],
+          "tags": [],
+          "hasDevUseExtension": false,
+          "hasNonDevUseExtension": true
+        }
+      ],
+      "deps": {
+        "platforms": "platforms@0.0.8",
+        "bazel_tools": "bazel_tools@_",
+        "local_config_platform": "local_config_platform@_"
+      },
+      "repoSpec": {
+        "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
+        "ruleClassName": "http_archive",
+        "attributes": {
+          "name": "rules_cc~0.0.9",
+          "urls": [
+            "https://github.com/bazelbuild/rules_cc/releases/download/0.0.9/rules_cc-0.0.9.tar.gz"
+          ],
+          "integrity": "sha256-IDeHW5pEVtzkp50RKorohbvEqtlo5lh9ym5k86CQDN8=",
+          "strip_prefix": "rules_cc-0.0.9",
+          "remote_patches": {
+            "https://bcr.bazel.build/modules/rules_cc/0.0.9/patches/module_dot_bazel_version.patch": "sha256-mM+qzOI0SgAdaJBlWOSMwMPKpaA9b7R37Hj/tp5bb4g="
+          },
+          "remote_patch_strip": 0
+        }
+      }
+    },
+    "arm_gnu_toolchain@_": {
+      "name": "arm_gnu_toolchain",
+      "version": "1.0.0",
+      "key": "arm_gnu_toolchain@_",
+      "repoName": "arm_gnu_toolchain",
+      "executionPlatformsToRegister": [],
+      "toolchainsToRegister": [],
+      "extensionUsages": [
+        {
+          "extensionBzlFile": "@arm_gnu_toolchain//:extensions.bzl",
+          "extensionName": "arm_toolchain",
+          "usingModule": "arm_gnu_toolchain@_",
+          "location": {
+            "file": "@@arm_gnu_toolchain~override//:MODULE.bazel",
+            "line": 9,
+            "column": 30
+          },
+          "imports": {
+            "arm_none_eabi": "arm_none_eabi",
+            "arm_none_eabi_darwin_x86_64": "arm_none_eabi_darwin_x86_64",
+            "arm_none_eabi_linux_aarch64": "arm_none_eabi_linux_aarch64",
+            "arm_none_eabi_linux_x86_64": "arm_none_eabi_linux_x86_64",
+            "arm_none_eabi_windows_x86_64": "arm_none_eabi_windows_x86_64",
+            "arm_none_linux_gnueabihf": "arm_none_linux_gnueabihf",
+            "arm_none_linux_gnueabihf_linux_aarch64": "arm_none_linux_gnueabihf_linux_aarch64",
+            "arm_none_linux_gnueabihf_linux_x86_64": "arm_none_linux_gnueabihf_linux_x86_64",
+            "arm_none_linux_gnueabihf_windows_x86_64": "arm_none_linux_gnueabihf_windows_x86_64"
+          },
+          "devImports": [],
+          "tags": [
+            {
+              "tagName": "arm_none_eabi",
+              "attributeValues": {
+                "version": "9.2.1"
+              },
+              "devDependency": false,
+              "location": {
+                "file": "@@arm_gnu_toolchain~override//:MODULE.bazel",
+                "line": 10,
+                "column": 28
+              }
+            },
+            {
+              "tagName": "arm_none_linux_gnueabihf",
+              "attributeValues": {
+                "version": "13.2.1"
+              },
+              "devDependency": false,
+              "location": {
+                "file": "@@arm_gnu_toolchain~override//:MODULE.bazel",
+                "line": 20,
+                "column": 39
+              }
+            }
+          ],
+          "hasDevUseExtension": false,
+          "hasNonDevUseExtension": true
+        }
+      ],
+      "deps": {
+        "platforms": "platforms@0.0.8",
+        "bazel_tools": "bazel_tools@_",
+        "local_config_platform": "local_config_platform@_"
       }
     },
     "bazel_tools@_": {
@@ -319,7 +452,7 @@
         "rules_license": "rules_license@0.0.7",
         "rules_proto": "rules_proto@5.3.0-21.7",
         "rules_python": "rules_python@0.20.0",
-        "platforms": "platforms@0.0.7",
+        "platforms": "platforms@0.0.8",
         "com_google_protobuf": "protobuf@21.7",
         "zlib": "zlib@1.3",
         "build_bazel_apple_support": "apple_support@1.5.0",
@@ -335,7 +468,7 @@
       "toolchainsToRegister": [],
       "extensionUsages": [],
       "deps": {
-        "platforms": "platforms@0.0.7",
+        "platforms": "platforms@0.0.8",
         "bazel_tools": "bazel_tools@_"
       }
     },
@@ -351,7 +484,7 @@
       ],
       "extensionUsages": [],
       "deps": {
-        "platforms": "platforms@0.0.7",
+        "platforms": "platforms@0.0.8",
         "bazel_tools": "bazel_tools@_",
         "local_config_platform": "local_config_platform@_"
       },
@@ -370,10 +503,10 @@
         }
       }
     },
-    "platforms@0.0.7": {
+    "platforms@0.0.8": {
       "name": "platforms",
-      "version": "0.0.7",
-      "key": "platforms@0.0.7",
+      "version": "0.0.8",
+      "key": "platforms@0.0.8",
       "repoName": "platforms",
       "executionPlatformsToRegister": [],
       "toolchainsToRegister": [],
@@ -389,9 +522,9 @@
         "attributes": {
           "name": "platforms",
           "urls": [
-            "https://github.com/bazelbuild/platforms/releases/download/0.0.7/platforms-0.0.7.tar.gz"
+            "https://github.com/bazelbuild/platforms/releases/download/0.0.8/platforms-0.0.8.tar.gz"
           ],
-          "integrity": "sha256-OlYcmee9vpFzqmU/1Xn+hJ8djWc5V4CrR3Cx84FDHVE=",
+          "integrity": "sha256-gVBAZgU4ns7LbaB8vLUJ1WN6OrmiS8abEQFTE2fYnXQ=",
           "strip_prefix": "",
           "remote_patches": {},
           "remote_patch_strip": 0
@@ -464,7 +597,7 @@
         }
       ],
       "deps": {
-        "platforms": "platforms@0.0.7",
+        "platforms": "platforms@0.0.8",
         "bazel_skylib": "bazel_skylib@1.3.0",
         "rules_proto": "rules_proto@5.3.0-21.7",
         "com_google_protobuf": "protobuf@21.7",
@@ -483,56 +616,6 @@
           "strip_prefix": "rules_python-0.20.0",
           "remote_patches": {
             "https://bcr.bazel.build/modules/rules_python/0.20.0/patches/module_dot_bazel_version.patch": "sha256-LICe/Q+KxbOIQCbb59g0QHBg2KTof3wHiISxAZsoHx4="
-          },
-          "remote_patch_strip": 0
-        }
-      }
-    },
-    "rules_cc@0.0.9": {
-      "name": "rules_cc",
-      "version": "0.0.9",
-      "key": "rules_cc@0.0.9",
-      "repoName": "rules_cc",
-      "executionPlatformsToRegister": [],
-      "toolchainsToRegister": [
-        "@local_config_cc_toolchains//:all"
-      ],
-      "extensionUsages": [
-        {
-          "extensionBzlFile": "@bazel_tools//tools/cpp:cc_configure.bzl",
-          "extensionName": "cc_configure_extension",
-          "usingModule": "rules_cc@0.0.9",
-          "location": {
-            "file": "https://bcr.bazel.build/modules/rules_cc/0.0.9/MODULE.bazel",
-            "line": 9,
-            "column": 29
-          },
-          "imports": {
-            "local_config_cc_toolchains": "local_config_cc_toolchains"
-          },
-          "devImports": [],
-          "tags": [],
-          "hasDevUseExtension": false,
-          "hasNonDevUseExtension": true
-        }
-      ],
-      "deps": {
-        "platforms": "platforms@0.0.7",
-        "bazel_tools": "bazel_tools@_",
-        "local_config_platform": "local_config_platform@_"
-      },
-      "repoSpec": {
-        "bzlFile": "@bazel_tools//tools/build_defs/repo:http.bzl",
-        "ruleClassName": "http_archive",
-        "attributes": {
-          "name": "rules_cc~0.0.9",
-          "urls": [
-            "https://github.com/bazelbuild/rules_cc/releases/download/0.0.9/rules_cc-0.0.9.tar.gz"
-          ],
-          "integrity": "sha256-IDeHW5pEVtzkp50RKorohbvEqtlo5lh9ym5k86CQDN8=",
-          "strip_prefix": "rules_cc-0.0.9",
-          "remote_patches": {
-            "https://bcr.bazel.build/modules/rules_cc/0.0.9/patches/module_dot_bazel_version.patch": "sha256-mM+qzOI0SgAdaJBlWOSMwMPKpaA9b7R37Hj/tp5bb4g="
           },
           "remote_patch_strip": 0
         }
@@ -616,7 +699,7 @@
         }
       ],
       "deps": {
-        "platforms": "platforms@0.0.7",
+        "platforms": "platforms@0.0.8",
         "rules_cc": "rules_cc@0.0.9",
         "bazel_skylib": "bazel_skylib@1.3.0",
         "rules_proto": "rules_proto@5.3.0-21.7",
@@ -790,7 +873,7 @@
       "toolchainsToRegister": [],
       "extensionUsages": [],
       "deps": {
-        "platforms": "platforms@0.0.7",
+        "platforms": "platforms@0.0.8",
         "rules_cc": "rules_cc@0.0.9",
         "bazel_tools": "bazel_tools@_",
         "local_config_platform": "local_config_platform@_"
@@ -844,7 +927,7 @@
       ],
       "deps": {
         "bazel_skylib": "bazel_skylib@1.3.0",
-        "platforms": "platforms@0.0.7",
+        "platforms": "platforms@0.0.8",
         "bazel_tools": "bazel_tools@_",
         "local_config_platform": "local_config_platform@_"
       },
@@ -905,7 +988,7 @@
       "extensionUsages": [],
       "deps": {
         "rules_cc": "rules_cc@0.0.9",
-        "platforms": "platforms@0.0.7",
+        "platforms": "platforms@0.0.8",
         "bazel_tools": "bazel_tools@_",
         "local_config_platform": "local_config_platform@_"
       },
@@ -939,7 +1022,7 @@
         "rules_proto": "rules_proto@5.3.0-21.7",
         "com_google_protobuf": "protobuf@21.7",
         "com_google_absl": "abseil-cpp@20211102.0",
-        "platforms": "platforms@0.0.7",
+        "platforms": "platforms@0.0.8",
         "bazel_tools": "bazel_tools@_",
         "local_config_platform": "local_config_platform@_"
       },
@@ -1055,7 +1138,7 @@
       "extensionUsages": [],
       "deps": {
         "com_google_absl": "abseil-cpp@20211102.0",
-        "platforms": "platforms@0.0.7",
+        "platforms": "platforms@0.0.8",
         "rules_cc": "rules_cc@0.0.9",
         "bazel_tools": "bazel_tools@_",
         "local_config_platform": "local_config_platform@_"
@@ -1112,7 +1195,7 @@
   "moduleExtensions": {
     "//:sources.bzl%sources": {
       "general": {
-        "bzlTransitiveDigest": "TvvFIGQd/mG3TMgMtOxwewFLHnfYYaYbsU2ftYco52k=",
+        "bzlTransitiveDigest": "cmVUAZCtCmE+YgGTU9iO8f0UFJ8tRtVuP/xdc2un1rI=",
         "accumulatedFileDigests": {},
         "envVariables": {},
         "generatedRepoSpecs": {
@@ -1122,23 +1205,19 @@
             "attributes": {
               "build_file_content": "\nfilegroup(\n  name = \"sources\",\n  srcs = glob([\"**\"]),\n  visibility = [\"//visibility:public\"],\n)\n",
               "name": "_main~sources~linux",
-              "url": "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.7.4.tar.xz",
-              "sha256": "f68d9f5ffc0a24f850699b86c8aea8b8687de7384158d5ed3bede37de098d60c",
-              "strip_prefix": "linux-6.7.4"
-            }
-          },
-          "glibc": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_archive",
-            "attributes": {
-              "build_file_content": "\nfilegroup(\n  name = \"sources\",\n  srcs = glob([\"**\"]),\n  visibility = [\"//visibility:public\"],\n)\n",
-              "name": "_main~sources~glibc",
-              "url": "http://ftp.gnu.org/gnu/glibc/glibc-2.37.tar.xz",
-              "sha256": "2257eff111a1815d74f46856daaf40b019c1e553156c69d48ba0cbfc1bb91a43",
-              "strip_prefix": "glibc-2.37"
+              "url": "https://github.com/STMicroelectronics/linux/archive/b3464dcb76176a9284c524219ae7444a177cf399.tar.gz",
+              "sha256": "fff18b5d14e648e8b300daebe99f20e61021b245c8413cb7b26e10ad796e3b48",
+              "strip_prefix": "linux-b3464dcb76176a9284c524219ae7444a177cf399"
             }
           }
-        }
+        },
+        "recordedRepoMappingEntries": [
+          [
+            "",
+            "bazel_tools",
+            "bazel_tools"
+          ]
+        ]
       }
     },
     "//conan:conan.bzl%conan": {
@@ -1158,7 +1237,8 @@
               "config": ".conan"
             }
           }
-        }
+        },
+        "recordedRepoMappingEntries": []
       }
     },
     "@@apple_support~1.5.0//crosstool:setup.bzl%apple_cc_configure_extension": {
@@ -1181,12 +1261,143 @@
               "name": "apple_support~1.5.0~apple_cc_configure_extension~local_config_apple_cc_toolchains"
             }
           }
-        }
+        },
+        "recordedRepoMappingEntries": []
+      }
+    },
+    "@@arm_gnu_toolchain~override//:extensions.bzl%arm_toolchain": {
+      "general": {
+        "bzlTransitiveDigest": "GgKuN4WAh5Tik/jTT4oagJlZyWxr4aeL592sQqzLUKM=",
+        "accumulatedFileDigests": {},
+        "envVariables": {},
+        "generatedRepoSpecs": {
+          "arm_none_eabi_windows_x86_64": {
+            "bzlFile": "@@arm_gnu_toolchain~override//:deps.bzl",
+            "ruleClassName": "arm_gnu_cross_hosted_platform_specific_repo",
+            "attributes": {
+              "toolchain_prefix": "arm-none-eabi",
+              "name": "arm_gnu_toolchain~override~arm_toolchain~arm_none_eabi_windows_x86_64",
+              "build_file": "@@arm_gnu_toolchain~override//toolchain:compiler/win.BUILD",
+              "sha256": "e4c964add8d0fdcc6b14f323e277a0946456082a84a1cc560da265b357762b62",
+              "url": "https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2019q4/gcc-arm-none-eabi-9-2019-q4-major-win32.zip?revision=20c5df9c-9870-47e2-b994-2a652fb99075&la=en&hash=347C07EEEB848CC8944F943D8E1EAAB55A6CA0BC"
+            }
+          },
+          "arm_none_linux_gnueabihf_linux_x86_64": {
+            "bzlFile": "@@arm_gnu_toolchain~override//:deps.bzl",
+            "ruleClassName": "arm_gnu_cross_hosted_platform_specific_repo",
+            "attributes": {
+              "toolchain_prefix": "arm-none-linux-gnueabihf",
+              "name": "arm_gnu_toolchain~override~arm_toolchain~arm_none_linux_gnueabihf_linux_x86_64",
+              "sha256": "df0f4927a67d1fd366ff81e40bd8c385a9324fbdde60437a512d106215f257b3",
+              "build_file": "@@arm_gnu_toolchain~override//toolchain:compiler/nix.BUILD",
+              "strip_prefix": "arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-linux-gnueabihf",
+              "url": "https://developer.arm.com/-/media/Files/downloads/gnu/13.2.rel1/binrel/arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-linux-gnueabihf.tar.xz?rev=adb0c0238c934aeeaa12c09609c5e6fc&hash=68DA67DE12CBAD82A0FA4B75247E866155C93053",
+              "patches": [
+                "@@arm_gnu_toolchain~override//toolchain:compiler/0001-Resolve-libc-relative-to-sysroot.patch"
+              ]
+            }
+          },
+          "arm_none_linux_gnueabihf_linux_aarch64": {
+            "bzlFile": "@@arm_gnu_toolchain~override//:deps.bzl",
+            "ruleClassName": "arm_gnu_cross_hosted_platform_specific_repo",
+            "attributes": {
+              "toolchain_prefix": "arm-none-linux-gnueabihf",
+              "name": "arm_gnu_toolchain~override~arm_toolchain~arm_none_linux_gnueabihf_linux_aarch64",
+              "sha256": "8ad384bb328bccc44396d85c8f8113b7b8c5e11bcfef322e77cda3ebe7baadb5",
+              "build_file": "@@arm_gnu_toolchain~override//toolchain:compiler/nix.BUILD",
+              "strip_prefix": "arm-gnu-toolchain-13.2.Rel1-aarch64-arm-none-linux-gnueabihf",
+              "url": "https://developer.arm.com/-/media/Files/downloads/gnu/13.2.rel1/binrel/arm-gnu-toolchain-13.2.rel1-aarch64-arm-none-linux-gnueabihf.tar.xz?rev=fbdb67e76c8349e5ad27a7c40fb270c9&hash=8CD3EBFFDC5E211275B705F6F9BCC0F6F5B4A53E",
+              "patches": [
+                "@@arm_gnu_toolchain~override//toolchain:compiler/0001-Resolve-libc-relative-to-sysroot.patch"
+              ]
+            }
+          },
+          "arm_none_linux_gnueabihf_windows_x86_64": {
+            "bzlFile": "@@arm_gnu_toolchain~override//:deps.bzl",
+            "ruleClassName": "arm_gnu_cross_hosted_platform_specific_repo",
+            "attributes": {
+              "toolchain_prefix": "arm-none-linux-gnueabihf",
+              "name": "arm_gnu_toolchain~override~arm_toolchain~arm_none_linux_gnueabihf_windows_x86_64",
+              "sha256": "047e72bcef8f7767691f36929a8c74ef66f717cf6264a31f48dd31bfb067f4c8",
+              "build_file": "@@arm_gnu_toolchain~override//toolchain:compiler/win.BUILD",
+              "url": "https://developer.arm.com/-/media/Files/downloads/gnu/13.2.rel1/binrel/arm-gnu-toolchain-13.2.rel1-mingw-w64-i686-arm-none-linux-gnueabihf.zip?rev=14b6dd20622a4beabb60a6ee41a4c141&hash=C1F9FA6DE8259B5ACA0211139F4304F2B942E489",
+              "patches": [
+                "@@arm_gnu_toolchain~override//toolchain:compiler/0001-Resolve-libc-relative-to-sysroot.patch"
+              ]
+            }
+          },
+          "arm_none_eabi": {
+            "bzlFile": "@@arm_gnu_toolchain~override//:deps.bzl",
+            "ruleClassName": "arm_gnu_toolchain_repo",
+            "attributes": {
+              "name": "arm_gnu_toolchain~override~arm_toolchain~arm_none_eabi",
+              "toolchain_name": "arm_none_eabi",
+              "toolchain_prefix": "arm-none-eabi"
+            }
+          },
+          "arm_none_eabi_linux_x86_64": {
+            "bzlFile": "@@arm_gnu_toolchain~override//:deps.bzl",
+            "ruleClassName": "arm_gnu_cross_hosted_platform_specific_repo",
+            "attributes": {
+              "toolchain_prefix": "arm-none-eabi",
+              "name": "arm_gnu_toolchain~override~arm_toolchain~arm_none_eabi_linux_x86_64",
+              "sha256": "bcd840f839d5bf49279638e9f67890b2ef3a7c9c7a9b25271e83ec4ff41d177a",
+              "build_file": "@@arm_gnu_toolchain~override//toolchain:compiler/nix.BUILD",
+              "strip_prefix": "gcc-arm-none-eabi-9-2019-q4-major",
+              "url": "https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2019q4/gcc-arm-none-eabi-9-2019-q4-major-x86_64-linux.tar.bz2?revision=108bd959-44bd-4619-9c19-26187abf5225&la=en&hash=E788CE92E5DFD64B2A8C246BBA91A249CB8E2D2D"
+            }
+          },
+          "arm_none_eabi_darwin_x86_64": {
+            "bzlFile": "@@arm_gnu_toolchain~override//:deps.bzl",
+            "ruleClassName": "arm_gnu_cross_hosted_platform_specific_repo",
+            "attributes": {
+              "toolchain_prefix": "arm-none-eabi",
+              "name": "arm_gnu_toolchain~override~arm_toolchain~arm_none_eabi_darwin_x86_64",
+              "sha256": "1249f860d4155d9c3ba8f30c19e7a88c5047923cea17e0d08e633f12408f01f0",
+              "build_file": "@@arm_gnu_toolchain~override//toolchain:compiler/nix.BUILD",
+              "strip_prefix": "gcc-arm-none-eabi-9-2019-q4-major",
+              "url": "https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2019q4/gcc-arm-none-eabi-9-2019-q4-major-mac.tar.bz2?revision=c2c4fe0e-c0b6-4162-97e6-7707e12f2b6e&la=en&hash=EC9D4B5F5B050267B924F876B306D72CDF3BDDC0"
+            }
+          },
+          "arm_none_linux_gnueabihf": {
+            "bzlFile": "@@arm_gnu_toolchain~override//:deps.bzl",
+            "ruleClassName": "arm_gnu_toolchain_repo",
+            "attributes": {
+              "name": "arm_gnu_toolchain~override~arm_toolchain~arm_none_linux_gnueabihf",
+              "toolchain_name": "arm_none_linux_gnueabihf",
+              "toolchain_prefix": "arm-none-linux-gnueabihf"
+            }
+          },
+          "arm_none_eabi_linux_aarch64": {
+            "bzlFile": "@@arm_gnu_toolchain~override//:deps.bzl",
+            "ruleClassName": "arm_gnu_cross_hosted_platform_specific_repo",
+            "attributes": {
+              "toolchain_prefix": "arm-none-eabi",
+              "name": "arm_gnu_toolchain~override~arm_toolchain~arm_none_eabi_linux_aarch64",
+              "sha256": "1f5b9309006737950b2218250e6bb392e2d68d4f1a764fe66be96e2a78888d83",
+              "build_file": "@@arm_gnu_toolchain~override//toolchain:compiler/nix.BUILD",
+              "strip_prefix": "gcc-arm-none-eabi-9-2019-q4-major",
+              "url": "https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2019q4/gcc-arm-none-eabi-9-2019-q4-major-aarch64-linux.tar.bz2?revision=4583ce78-e7e7-459a-ad9f-bff8e94839f1&la=en&hash=550DB9C0184B7C70B6C020A5DCBB9D1E156264B7"
+            }
+          }
+        },
+        "recordedRepoMappingEntries": [
+          [
+            "arm_gnu_toolchain~override",
+            "arm_gnu_toolchain",
+            "arm_gnu_toolchain~override"
+          ],
+          [
+            "arm_gnu_toolchain~override",
+            "bazel_tools",
+            "bazel_tools"
+          ]
+        ]
       }
     },
     "@@bazel_tools//tools/cpp:cc_configure.bzl%cc_configure_extension": {
       "general": {
-        "bzlTransitiveDigest": "O9sf6ilKWU9Veed02jG9o2HM/xgV/UAyciuFBuxrFRY=",
+        "bzlTransitiveDigest": "mcsWHq3xORJexV5/4eCvNOLxFOQKV6eli3fkr+tEaqE=",
         "accumulatedFileDigests": {},
         "envVariables": {},
         "generatedRepoSpecs": {
@@ -1204,7 +1415,14 @@
               "name": "bazel_tools~cc_configure_extension~local_config_cc_toolchains"
             }
           }
-        }
+        },
+        "recordedRepoMappingEntries": [
+          [
+            "bazel_tools",
+            "bazel_tools",
+            "bazel_tools"
+          ]
+        ]
       }
     },
     "@@bazel_tools//tools/osx:xcode_configure.bzl%xcode_configure_extension": {
@@ -1222,7 +1440,8 @@
               "remote_xcode": ""
             }
           }
-        }
+        },
+        "recordedRepoMappingEntries": []
       }
     },
     "@@bazel_tools//tools/sh:sh_configure.bzl%sh_configure_extension": {
@@ -1238,12 +1457,13 @@
               "name": "bazel_tools~sh_configure_extension~local_config_sh"
             }
           }
-        }
+        },
+        "recordedRepoMappingEntries": []
       }
     },
     "@@rules_foreign_cc~0.10.1//foreign_cc:extensions.bzl%tools": {
       "general": {
-        "bzlTransitiveDigest": "OcF+tp6COF8pKnoEc7KfPheAYbV3W33d+eWXUAMgTlE=",
+        "bzlTransitiveDigest": "jvAsWV4VxU5lCkkz2c1t9UggMY0fpg+S5hPM4JPsKYk=",
         "accumulatedFileDigests": {},
         "envVariables": {},
         "generatedRepoSpecs": {
@@ -1591,12 +1811,24 @@
               ]
             }
           }
-        }
+        },
+        "recordedRepoMappingEntries": [
+          [
+            "rules_foreign_cc~0.10.1",
+            "bazel_tools",
+            "bazel_tools"
+          ],
+          [
+            "rules_foreign_cc~0.10.1",
+            "rules_foreign_cc",
+            "rules_foreign_cc~0.10.1"
+          ]
+        ]
       }
     },
     "@@rules_java~7.1.0//java:extensions.bzl%toolchains": {
       "general": {
-        "bzlTransitiveDigest": "iUIRqCK7tkhvcDJCAfPPqSd06IHG0a8HQD0xeQyVAqw=",
+        "bzlTransitiveDigest": "D02GmifxnV/IhYgspsJMDZ/aE8HxAjXgek5gi6FSto4=",
         "accumulatedFileDigests": {},
         "envVariables": {},
         "generatedRepoSpecs": {
@@ -2131,7 +2363,19 @@
               "build_file": "\nconfig_setting(\n    name = \"prefix_version_setting\",\n    values = {\"java_runtime_version\": \"remotejdk_21\"},\n    visibility = [\"//visibility:private\"],\n)\nconfig_setting(\n    name = \"version_setting\",\n    values = {\"java_runtime_version\": \"21\"},\n    visibility = [\"//visibility:private\"],\n)\nalias(\n    name = \"version_or_prefix_version_setting\",\n    actual = select({\n        \":version_setting\": \":version_setting\",\n        \"//conditions:default\": \":prefix_version_setting\",\n    }),\n    visibility = [\"//visibility:private\"],\n)\ntoolchain(\n    name = \"toolchain\",\n    target_compatible_with = [\"@platforms//os:windows\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:runtime_toolchain_type\",\n    toolchain = \"@remotejdk21_win//:jdk\",\n)\ntoolchain(\n    name = \"bootstrap_runtime_toolchain\",\n    # These constraints are not required for correctness, but prevent fetches of remote JDK for\n    # different architectures. As every Java compilation toolchain depends on a bootstrap runtime in\n    # the same configuration, this constraint will not result in toolchain resolution failures.\n    exec_compatible_with = [\"@platforms//os:windows\", \"@platforms//cpu:x86_64\"],\n    target_settings = [\":version_or_prefix_version_setting\"],\n    toolchain_type = \"@bazel_tools//tools/jdk:bootstrap_runtime_toolchain_type\",\n    toolchain = \"@remotejdk21_win//:jdk\",\n)\n"
             }
           }
-        }
+        },
+        "recordedRepoMappingEntries": [
+          [
+            "rules_java~7.1.0",
+            "bazel_tools",
+            "bazel_tools"
+          ],
+          [
+            "rules_java~7.1.0",
+            "remote_java_tools",
+            "rules_java~7.1.0~toolchains~remote_java_tools"
+          ]
+        ]
       }
     }
   }
