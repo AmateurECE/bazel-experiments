@@ -1,13 +1,10 @@
 load("@rules_cc//cc:defs.bzl", "cc_binary")
-load(":defs.bzl", "kernel_build", "single_app_cpio_initrd", "linux_toolchain")
+load(":defs.bzl", "kernel_build", "uboot_build", "single_app_cpio_initrd", "linux_toolchain")
 
 linux_toolchain(
   name = "linux-toolchain-config",
+  # TODO: Use select() here to also be compatible with x86_64
   target_cc_toolchain = "@arm_none_linux_gnueabihf//toolchain:cc_toolchain_linux_aarch64_arm",
-  ld = "@arm_none_linux_gnueabihf_linux_aarch64//:ld",
-  nm = "@arm_none_linux_gnueabihf_linux_aarch64//:nm",
-  objcopy = "@arm_none_linux_gnueabihf_linux_aarch64//:objcopy",
-  objdump = "@arm_none_linux_gnueabihf_linux_aarch64//:objdump",
 )
 
 toolchain(
@@ -21,15 +18,37 @@ toolchain(
   visibility = ["//visibility:public"],
 )
 
+# NOTE: Can use this to match u-boot and linux toolchains later
+# constraint_setting(name = "kbuild_flavor")
+#
+# constraint_value(
+#   name = "kbuild_uboot",
+#   constraint_setting = ":kbuild_flavor",
+# )
+
 kernel_build(
   name = "linux",
   srcs = ["@linux//:sources"],
   defconfig = "multi_v7_defconfig",
   image = "zImage",
-  dtb = "stm32mp157f-dk2.dtb",
+  dtb = "stm32mp157d-dk1.dtb",
   # TODO: Should be possible to pull these from CcToolchain?
   arch = "arm",
-  cross_compile = "armv7l-unknown-linux-gnueabihf-",
+  cross_compile = "arm-none-linux-gnueabihf-",
+)
+
+uboot_build(
+  name = "uboot",
+  srcs = ["@u-boot//:sources"],
+  defconfig = "stm32mp15_defconfig",
+  image = "u-boot.bin",
+  # NOTE: Missing extension here is intentional.
+  dtb = "stm32mp157d-dk1",
+  arch = "arm",
+  cross_compile = "arm-none-linux-gnueabihf-",
+  # exec_compatible_with = [
+  #   ":kbuild_uboot",
+  # ]
 )
 
 cc_binary(
@@ -41,6 +60,7 @@ cc_binary(
   ],
 )
 
+# TODO: Put glibc components into a separate target.
 single_app_cpio_initrd(
   name = "rootfs",
   init = ":init",

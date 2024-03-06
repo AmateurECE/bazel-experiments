@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "6ea98e1a5e2f408bdb7ce8654f7825758db8d5e71d495200ba328ae01c235313",
+  "moduleFileHash": "076fd7dde4ea7ea6f8f55a6435e2b6078cbe4dca46bb86e48f50c0dc270a57d4",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -110,7 +110,8 @@
             "column": 24
           },
           "imports": {
-            "linux": "linux"
+            "linux": "linux",
+            "u-boot": "u-boot"
           },
           "devImports": [],
           "tags": [
@@ -126,6 +127,21 @@
               "location": {
                 "file": "@@//:MODULE.bazel",
                 "line": 29,
+                "column": 16
+              }
+            },
+            {
+              "tagName": "archive",
+              "attributeValues": {
+                "name": "u-boot",
+                "url": "https://github.com/STMicroelectronics/u-boot/archive/ae5922ad8322eca72e883e2d809257d5606659fd.tar.gz",
+                "sha256": "5df837d87c55000c0690ffabe40d2836a60b913b75732d9afe69f85cfb737ce7",
+                "strip_prefix": "u-boot-ae5922ad8322eca72e883e2d809257d5606659fd"
+              },
+              "devDependency": false,
+              "location": {
+                "file": "@@//:MODULE.bazel",
+                "line": 36,
                 "column": 16
               }
             }
@@ -1199,6 +1215,17 @@
         "accumulatedFileDigests": {},
         "envVariables": {},
         "generatedRepoSpecs": {
+          "u-boot": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_archive",
+            "attributes": {
+              "build_file_content": "\nfilegroup(\n  name = \"sources\",\n  srcs = glob([\"**\"]),\n  visibility = [\"//visibility:public\"],\n)\n",
+              "name": "_main~sources~u-boot",
+              "url": "https://github.com/STMicroelectronics/u-boot/archive/ae5922ad8322eca72e883e2d809257d5606659fd.tar.gz",
+              "sha256": "5df837d87c55000c0690ffabe40d2836a60b913b75732d9afe69f85cfb737ce7",
+              "strip_prefix": "u-boot-ae5922ad8322eca72e883e2d809257d5606659fd"
+            }
+          },
           "linux": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",

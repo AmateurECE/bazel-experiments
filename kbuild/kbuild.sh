@@ -4,10 +4,7 @@ set -e
 set -x
 
 kbuild() {
-  make O=$B ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE \
-    CC=$(realpath $CC) LD=$(realpath $LD) NM=$(realpath $NM) \
-    AR=$(realpath $AR) OBJCOPY=$(realpath $OBJCOPY) STRIP=$(realpath $STRIP) \
-    OBJDUMP=$(realpath $OBJDUMP) -C $KDIR $@
+  make O=$B ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE -C $KDIR $@
 }
 
 patch-config() {
@@ -41,8 +38,14 @@ fi
 # downloading files during the build.
 export HOME=$PWD
 
-DEFCONFIG=${@:$OPTIND}
-ALLTARGET=${@:$OPTIND+1}
+MAKE_TARGETS=(${@:$OPTIND})
+DEFCONFIG=${MAKE_TARGETS[0]}
+ALLTARGET=${MAKE_TARGETS[1]}
+
+# Fix PATH variable with hermetic tools
+IFS=:; for tool_path in $HERMETIC_TOOL_PATH; do
+  export PATH="$(realpath $tool_path):$PATH"
+done
 
 kbuild $DEFCONFIG
 

@@ -1,8 +1,9 @@
-load("@bazel_tools//tools/build_defs/cc:action_names.bzl", "ACTION_NAMES")
-load("@rules_cc//cc:find_cc_toolchain.bzl", "find_cc_toolchain")
-
-
-KbuildToolchainInfo = provider()
+KbuildToolchainInfo = provider(
+  fields = {
+    'hermetic_tool_path': 'List of paths to augment the PATH environment variable',
+    'hermetic_tools': 'List of files to add as inputs to kbuild actions',
+  }
+)
 
 
 def detect_root(sources):
@@ -27,14 +28,12 @@ def _kbuild_target_impl(ctx):
   Creates an action that executes a kbuild configuration and installs some
   generated artifacts to the output directory.
   """
-  toolchain = ctx.toolchains[":toolchain_type"]
-  target_cc_toolchain = toolchain.target_cc_toolchain_info
-  kbuild_toolchain_info = toolchain.kbuild_toolchain_info
+  toolchain = ctx.toolchains[":toolchain_type"].kbuild_toolchain_info
   root_directory = detect_root(ctx.files.srcs)
   config = ctx.actions.declare_file(ctx.attr.name + ".cfg")
 
   inputs = ctx.files.srcs + ctx.files.additional_inputs \
-      + target_cc_toolchain.all_files.to_list()
+      + toolchain.hermetic_tools
 
   outputs = [config]
   for name in ctx.attr.artifacts.values():
@@ -45,34 +44,13 @@ def _kbuild_target_impl(ctx):
   args.add(ctx.attr.defconfig)
   args.add(ctx.attr.all_target)
 
-  feature_configuration = cc_common.configure_features(
-    ctx = ctx,
-    cc_toolchain = target_cc_toolchain,
-  )
-
   env = {
     # Standard kbuild stuff
     'ARCH': ctx.attr.arch,
     'CROSS_COMPILE': ctx.attr.cross_compile,
 
     # Tools
-    # TODO: This makes target toolchain hermetic, but not host toolchain.
-    'AR': cc_common.get_tool_for_action(
-      feature_configuration = feature_configuration,
-      action_name = ACTION_NAMES.cpp_link_static_library,
-    ),
-    'CC': cc_common.get_tool_for_action(
-      feature_configuration = feature_configuration,
-      action_name = ACTION_NAMES.c_compile,
-    ),
-    'LD': kbuild_toolchain_info.ld.path,
-    'NM': kbuild_toolchain_info.nm.path,
-    'OBJCOPY': kbuild_toolchain_info.objcopy.path,
-    'OBJDUMP': kbuild_toolchain_info.objdump.path,
-    'STRIP': cc_common.get_tool_for_action(
-      feature_configuration = feature_configuration,
-      action_name = ACTION_NAMES.strip,
-    ),
+    'HERMETIC_TOOL_PATH': ':'.join(toolchain.hermetic_tool_path),
 
     # Instructions for kbuild.sh
     'NAME': ctx.attr.name,
@@ -84,10 +62,6 @@ def _kbuild_target_impl(ctx):
     env[key] = value
   env['CONFIG'] = ':'.join(ctx.attr.additional_config.keys())
 
-  # TODO: Create a "kernel toolchain" that combines a "kbuild toolchain"
-  # (itself combining a exec & target cc_toolchain, plus the tools to run
-  # kbuild--make, etc.) plus the tools needed to compile the kernel--flex,
-  # bison, bc, etc.
   ctx.actions.run(
     mnemonic = ctx.attr.name + "Kbuild",
     executable = ctx.executable._builder,
@@ -127,9 +101,7 @@ kbuild_target = rule(
       allow_files = True,
     ),
   },
-  fragments = ["cpp"],
   toolchains = [
-    "@rules_cc//cc:toolchain_type",
     ":toolchain_type",
   ],
 )
