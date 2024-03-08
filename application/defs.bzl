@@ -1,19 +1,8 @@
 load("//kbuild:kbuild.bzl", "kbuild_target", "KbuildToolchainInfo")
+load("//:common.bzl", "hermetic_tool_path")
 load("@rules_cc//cc:defs.bzl", "cc_common")
 load("@rules_cc//cc:action_names.bzl", "ACTION_NAMES")
-load("@bazel_skylib//lib:paths.bzl", "paths")
-
-
-def _hermetic_tool_path(tools):
-  """Creates a colon-separated list of path components that can be used to 
-  extend the path. The kbuild script will convert these to absolute paths and
-  augment the PATH environment variable."""
-  tool_path = []
-  for tool in tools:
-    dirname = paths.dirname(tool)
-    if dirname not in tool_path:
-      tool_path.append(dirname)
-  return tool_path
+load("@rules_cc//cc:find_cc_toolchain.bzl", "find_cc_toolchain")
 
 
 def _linux_toolchain_impl(ctx):
@@ -34,10 +23,10 @@ def _linux_toolchain_impl(ctx):
 
   # For hermetic GCC toolchains, all the tools should be listed in the same
   # directory as the compiler.
-  hermetic_tool_path = _hermetic_tool_path([compiler])
+  tool_path = hermetic_tool_path([compiler])
 
   kbuild = KbuildToolchainInfo(
-    hermetic_tool_path = hermetic_tool_path,
+    hermetic_tool_path = tool_path,
     hermetic_tools = hermetic_tools,
   )
   return [platform_common.ToolchainInfo(

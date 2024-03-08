@@ -1,5 +1,12 @@
 load("@rules_cc//cc:defs.bzl", "cc_binary")
-load(":defs.bzl", "kernel_build", "uboot_build", "single_app_cpio_initrd", "linux_toolchain")
+load(
+  ":defs.bzl",
+  "kernel_build",
+  "uboot_build",
+  "single_app_cpio_initrd",
+  "linux_toolchain",
+)
+load("//make:make.bzl", "make")
 
 linux_toolchain(
   name = "linux-toolchain-config",
@@ -49,6 +56,29 @@ uboot_build(
   # exec_compatible_with = [
   #   ":kbuild_uboot",
   # ]
+)
+
+OPTEE_BINARIES = [
+  'out/arm-plat-stm32mp1/core/tee-header_v2.bin',
+  'out/arm-plat-stm32mp1/core/tee-pager_v2.bin',
+  'out/arm-plat-stm32mp1/core/tee-pageable_v2.bin',
+]
+
+make(
+  name = "optee",
+  env = {
+    'CROSS_COMPILE': 'arm-none-linux-gnueabihf-',
+    'ARCH': 'arm',
+    'PLATFORM': 'stm32mp1-157D_DK1',
+    'CFG_EMBED_DTB_SOURCE_FILE': 'stm32mp157d-dk1.dts',
+  },
+  srcs = ["@optee//:sources"],
+  outputs = OPTEE_BINARIES,
+  target = "all",
+  target_compatible_with = [
+    "@platforms//os:linux",
+    "@platforms//cpu:aarch32",
+  ]
 )
 
 cc_binary(

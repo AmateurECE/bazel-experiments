@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "076fd7dde4ea7ea6f8f55a6435e2b6078cbe4dca46bb86e48f50c0dc270a57d4",
+  "moduleFileHash": "8b0ca947e2ca35c855db66126a06b4902d35b6f5222e5c1c0d2b331ad4f0abb7",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -101,48 +101,73 @@
           "hasNonDevUseExtension": true
         },
         {
-          "extensionBzlFile": "@//:sources.bzl",
-          "extensionName": "sources",
+          "extensionBzlFile": "//:MODULE.bazel",
+          "extensionName": "_repo_rules",
           "usingModule": "<root>",
           "location": {
             "file": "@@//:MODULE.bazel",
-            "line": 27,
-            "column": 24
+            "line": 0,
+            "column": 0
           },
           "imports": {
             "linux": "linux",
-            "u-boot": "u-boot"
+            "u-boot": "u-boot",
+            "optee": "optee"
           },
           "devImports": [],
           "tags": [
             {
-              "tagName": "archive",
+              "tagName": "@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
               "attributeValues": {
-                "name": "linux",
+                "build_file_content": "\nfilegroup(\n  name = \"sources\",\n  srcs = glob([\"**\"]),\n  visibility = [\"//visibility:public\"],\n)\n",
                 "url": "https://github.com/STMicroelectronics/linux/archive/b3464dcb76176a9284c524219ae7444a177cf399.tar.gz",
                 "sha256": "fff18b5d14e648e8b300daebe99f20e61021b245c8413cb7b26e10ad796e3b48",
-                "strip_prefix": "linux-b3464dcb76176a9284c524219ae7444a177cf399"
+                "strip_prefix": "linux-b3464dcb76176a9284c524219ae7444a177cf399",
+                "name": "linux"
               },
               "devDependency": false,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 29,
-                "column": 16
+                "line": 37,
+                "column": 13
               }
             },
             {
-              "tagName": "archive",
+              "tagName": "@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
               "attributeValues": {
-                "name": "u-boot",
+                "build_file_content": "\nfilegroup(\n  name = \"sources\",\n  srcs = glob([\"**\"]),\n  visibility = [\"//visibility:public\"],\n)\n",
                 "url": "https://github.com/STMicroelectronics/u-boot/archive/ae5922ad8322eca72e883e2d809257d5606659fd.tar.gz",
                 "sha256": "5df837d87c55000c0690ffabe40d2836a60b913b75732d9afe69f85cfb737ce7",
-                "strip_prefix": "u-boot-ae5922ad8322eca72e883e2d809257d5606659fd"
+                "strip_prefix": "u-boot-ae5922ad8322eca72e883e2d809257d5606659fd",
+                "name": "u-boot"
               },
               "devDependency": false,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 36,
-                "column": 16
+                "line": 45,
+                "column": 13
+              }
+            },
+            {
+              "tagName": "@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+              "attributeValues": {
+                "build_file_content": "\nfilegroup(\n  name = \"sources\",\n  srcs = glob([\"**\"]),\n  visibility = [\"//visibility:public\"],\n)\n",
+                "url": "https://github.com/STMicroelectronics/optee_os/archive/3712e94c4728c70b7fd99af4031d51201b05a1cc.tar.gz",
+                "sha256": "535ecb043d03639a2045a62f113d7b7ad3253162b5a2a283ebb792078d546f35",
+                "strip_prefix": "optee_os-3712e94c4728c70b7fd99af4031d51201b05a1cc",
+                "patch_args": [
+                  "-p1"
+                ],
+                "patches": [
+                  "//application:0001-Fix-enum-int-mismatch.patch"
+                ],
+                "name": "optee"
+              },
+              "devDependency": false,
+              "location": {
+                "file": "@@//:MODULE.bazel",
+                "line": 53,
+                "column": 13
               }
             }
           ],
@@ -1209,42 +1234,53 @@
     }
   },
   "moduleExtensions": {
-    "//:sources.bzl%sources": {
+    "//:MODULE.bazel%_repo_rules": {
       "general": {
-        "bzlTransitiveDigest": "cmVUAZCtCmE+YgGTU9iO8f0UFJ8tRtVuP/xdc2un1rI=",
+        "bzlTransitiveDigest": "nSp+oEsTv5DYy1r8s+aEwKWUHoJDhXelRNB5mFkZmdU=",
         "accumulatedFileDigests": {},
         "envVariables": {},
         "generatedRepoSpecs": {
-          "u-boot": {
-            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
-            "ruleClassName": "http_archive",
-            "attributes": {
-              "build_file_content": "\nfilegroup(\n  name = \"sources\",\n  srcs = glob([\"**\"]),\n  visibility = [\"//visibility:public\"],\n)\n",
-              "name": "_main~sources~u-boot",
-              "url": "https://github.com/STMicroelectronics/u-boot/archive/ae5922ad8322eca72e883e2d809257d5606659fd.tar.gz",
-              "sha256": "5df837d87c55000c0690ffabe40d2836a60b913b75732d9afe69f85cfb737ce7",
-              "strip_prefix": "u-boot-ae5922ad8322eca72e883e2d809257d5606659fd"
-            }
-          },
           "linux": {
             "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
             "ruleClassName": "http_archive",
             "attributes": {
               "build_file_content": "\nfilegroup(\n  name = \"sources\",\n  srcs = glob([\"**\"]),\n  visibility = [\"//visibility:public\"],\n)\n",
-              "name": "_main~sources~linux",
               "url": "https://github.com/STMicroelectronics/linux/archive/b3464dcb76176a9284c524219ae7444a177cf399.tar.gz",
               "sha256": "fff18b5d14e648e8b300daebe99f20e61021b245c8413cb7b26e10ad796e3b48",
-              "strip_prefix": "linux-b3464dcb76176a9284c524219ae7444a177cf399"
+              "strip_prefix": "linux-b3464dcb76176a9284c524219ae7444a177cf399",
+              "name": "_main~_repo_rules~linux"
+            }
+          },
+          "u-boot": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_archive",
+            "attributes": {
+              "build_file_content": "\nfilegroup(\n  name = \"sources\",\n  srcs = glob([\"**\"]),\n  visibility = [\"//visibility:public\"],\n)\n",
+              "url": "https://github.com/STMicroelectronics/u-boot/archive/ae5922ad8322eca72e883e2d809257d5606659fd.tar.gz",
+              "sha256": "5df837d87c55000c0690ffabe40d2836a60b913b75732d9afe69f85cfb737ce7",
+              "strip_prefix": "u-boot-ae5922ad8322eca72e883e2d809257d5606659fd",
+              "name": "_main~_repo_rules~u-boot"
+            }
+          },
+          "optee": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_archive",
+            "attributes": {
+              "build_file_content": "\nfilegroup(\n  name = \"sources\",\n  srcs = glob([\"**\"]),\n  visibility = [\"//visibility:public\"],\n)\n",
+              "url": "https://github.com/STMicroelectronics/optee_os/archive/3712e94c4728c70b7fd99af4031d51201b05a1cc.tar.gz",
+              "sha256": "535ecb043d03639a2045a62f113d7b7ad3253162b5a2a283ebb792078d546f35",
+              "strip_prefix": "optee_os-3712e94c4728c70b7fd99af4031d51201b05a1cc",
+              "patch_args": [
+                "-p1"
+              ],
+              "patches": [
+                "@@//application:0001-Fix-enum-int-mismatch.patch"
+              ],
+              "name": "_main~_repo_rules~optee"
             }
           }
         },
-        "recordedRepoMappingEntries": [
-          [
-            "",
-            "bazel_tools",
-            "bazel_tools"
-          ]
-        ]
+        "recordedRepoMappingEntries": []
       }
     },
     "//conan:conan.bzl%conan": {

@@ -24,23 +24,43 @@ conan.install(requires="stm32mp1/1.6.0")
 
 use_repo(conan, "conan")
 
-sources = use_extension("//:sources.bzl", "sources")
+http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-sources.archive(
+_BUILD_SOURCES = """
+filegroup(
+  name = "sources",
+  srcs = glob([\"**\"]),
+  visibility = ["//visibility:public"],
+)
+"""
+
+http_archive(
   name = "linux",
+  build_file_content = _BUILD_SOURCES,
   url='https://github.com/STMicroelectronics/linux/archive/b3464dcb76176a9284c524219ae7444a177cf399.tar.gz',
   sha256='fff18b5d14e648e8b300daebe99f20e61021b245c8413cb7b26e10ad796e3b48',
   strip_prefix='linux-b3464dcb76176a9284c524219ae7444a177cf399',
 )
 
-sources.archive(
+http_archive(
   name = "u-boot",
+  build_file_content = _BUILD_SOURCES,
   url='https://github.com/STMicroelectronics/u-boot/archive/ae5922ad8322eca72e883e2d809257d5606659fd.tar.gz',
   sha256='5df837d87c55000c0690ffabe40d2836a60b913b75732d9afe69f85cfb737ce7',
   strip_prefix='u-boot-ae5922ad8322eca72e883e2d809257d5606659fd',
 )
 
-use_repo(sources, "linux", "u-boot")
+http_archive(
+  name = "optee",
+  build_file_content = _BUILD_SOURCES,
+  url='https://github.com/STMicroelectronics/optee_os/archive/3712e94c4728c70b7fd99af4031d51201b05a1cc.tar.gz',
+  sha256='535ecb043d03639a2045a62f113d7b7ad3253162b5a2a283ebb792078d546f35',
+  strip_prefix='optee_os-3712e94c4728c70b7fd99af4031d51201b05a1cc',
+  patch_args = ["-p1"],
+  patches = [
+    "//application:0001-Fix-enum-int-mismatch.patch",
+  ]
+)
 
 register_toolchains(
   "//application:linux-toolchain",

@@ -1,0 +1,11 @@
+--- a/core/mm/core_mmu.c
++++ b/core/mm/core_mmu.c
+@@ -1511,7 +1511,7 @@
+ /*
+  * teecore gets some memory area definitions
+  */
+-void core_mmu_get_mem_by_type(unsigned int type, vaddr_t *s, vaddr_t *e)
++void core_mmu_get_mem_by_type(enum teecore_memtypes type, vaddr_t *s, vaddr_t *e)
+ {
+ 	struct tee_mmap_region *map = find_map_by_type(type);
+ 
