@@ -19,6 +19,6 @@ cpio_image(
   name = "rootfs",
   srcs = [
     "//application:init",
-    # "//coprocessor:firmware",
+    "//coprocessor:firmware",
   ],
 )

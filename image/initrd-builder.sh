@@ -10,14 +10,13 @@ while getopts ":o:f:" flag; do
   esac
 done
 
-INPUT=${@:$OPTIND}
+INPUTS=(${@:$OPTIND})
 
 # Ensure the output directory exists.
 mkdir -p $OUTPUT_DIRECTORY
 
 # Copy input executable to output directory.
-init=$OUTPUT_DIRECTORY/init
-install -m755 $INPUT $init
+install -t $OUTPUT_DIRECTORY ${INPUTS[@]}
 
 # Initialize the /dev directory
 install -d -m755 $OUTPUT_DIRECTORY/dev
