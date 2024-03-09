@@ -1,4 +1,6 @@
 load("//image:gpt.bzl", "gpt_image")
+load("//image:initrd.bzl", "cpio_image")
+
 
 gpt_image(
   name = "demo",
@@ -7,6 +9,16 @@ gpt_image(
   rootfs = [
     "//application:optee",
     "//application:zImage",
-    "//application:rootfs",
+    ":rootfs",
+  ],
+)
+
+
+# TODO: Put glibc components into a separate target.
+cpio_image(
+  name = "rootfs",
+  srcs = [
+    "//application:init",
+    # "//coprocessor:firmware",
   ],
 )

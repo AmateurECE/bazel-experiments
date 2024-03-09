@@ -1,1 +1,1 @@
-exports_files(["mkgpt.sh"])
+exports_files(["mkgpt.sh", "initrd-builder.sh"])

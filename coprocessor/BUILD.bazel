@@ -1,3 +1,6 @@
+load("@aspect_bazel_lib//lib:transitions.bzl", "platform_transition_filegroup")
+
+
 cc_binary(
   name = "hello-world",
   srcs = [
@@ -12,4 +15,11 @@ cc_binary(
     "@platforms//os:none",
     "@platforms//cpu:aarch32",
   ],
+)
+
+platform_transition_filegroup(
+    name = "firmware",
+    srcs = [":hello-world"],
+    target_platform = "//platforms:cortex-m4",
+    visibility = ["//visibility:public"],
 )

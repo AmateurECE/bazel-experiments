@@ -3,7 +3,6 @@ load(
   ":defs.bzl",
   "kernel_build",
   "uboot_build",
-  "single_app_cpio_initrd",
   "linux_toolchain",
 )
 load("//make:make.bzl", "make")
@@ -143,11 +142,5 @@ cc_binary(
     "@platforms//cpu:aarch32",
   ],
   linkopts = ["-lstdc++"],
-)
-
-# TODO: Put glibc components into a separate target.
-single_app_cpio_initrd(
-  name = "rootfs",
-  init = ":init",
-  visibility = ["//visibility:public"]
+  visibility = ["//visibility:public"],
 )
