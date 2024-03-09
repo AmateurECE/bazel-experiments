@@ -1,6 +1,6 @@
 # Otherwise, Bazel will attempt to build for the local platform. See:
 # https://bazel.build/extending/platforms#specifying-build-platform
-build --platforms=//platforms:cortex-a7
+build --platforms=//platforms:cortex-a7-linux
 
 # This flag won't be enabled by default until Bazel 7. See:
 # https://github.com/bazelbuild/bazel/issues/7260

@@ -7,6 +7,7 @@ load(
   "linux_toolchain",
 )
 load("//make:make.bzl", "make")
+load("@aspect_bazel_lib//lib:transitions.bzl", "platform_transition_filegroup")
 
 linux_toolchain(
   name = "linux-toolchain-config",
@@ -58,12 +59,6 @@ uboot_build(
   # ]
 )
 
-OPTEE_BINARIES = [
-  'out/arm-plat-stm32mp1/core/tee-header_v2.bin',
-  'out/arm-plat-stm32mp1/core/tee-pager_v2.bin',
-  'out/arm-plat-stm32mp1/core/tee-pageable_v2.bin',
-]
-
 make(
   name = "optee",
   env = {
@@ -73,12 +68,48 @@ make(
     'CFG_EMBED_DTB_SOURCE_FILE': 'stm32mp157d-dk1.dts',
   },
   srcs = ["@optee//:sources"],
-  outputs = OPTEE_BINARIES,
+  builddir_variable = "O",
+  outputs = [
+    'core/tee-header_v2.bin',
+    'core/tee-pager_v2.bin',
+    'core/tee-pageable_v2.bin',
+  ],
   target = "all",
   target_compatible_with = [
     "@platforms//os:linux",
     "@platforms//cpu:aarch32",
   ]
+)
+
+make(
+  name = "trusted_firmware_a",
+  # TF-A build system ignores these variables when they're set in the
+  # environment.
+  args = [
+    'CROSS_COMPILE=arm-none-eabi-',
+    'PLAT=stm32mp1',
+    'ARCH=aarch32',
+    'ARM_ARCH_MAJOR=7',
+    'DTB_FILE_NAME=stm32mp157d-dk1.dtb',
+    'STM32MP_SDMMC=1',
+  ],
+  srcs = ["@bl2//:sources"],
+  builddir_variable = "BUILD_BASE",
+  outputs = [
+    "stm32mp1/release/tf-a-stm32mp157d-dk1.stm32",
+    "stm32mp1/release/tf-a-stm32mp157d-dk1.map",
+  ],
+  target = "",
+  target_compatible_with = [
+    "@platforms//os:none",
+    "@platforms//cpu:aarch32",
+  ],
+)
+
+platform_transition_filegroup(
+    name = "bl2",
+    srcs = [":trusted_firmware_a"],
+    target_platform = "//platforms:cortex-a7-baremetal",
 )
 
 cc_binary(

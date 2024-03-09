@@ -30,19 +30,16 @@ def _make_impl(ctx):
     action_name = ACTION_NAMES.c_compile,
   )
 
-  actual_output_paths = []
-  for output in ctx.attr.outputs:
-    actual_output_paths.append(source + "/" + output)
-
   env = {
     'HERMETIC_TOOL_PATH': ':'.join(hermetic_tool_path([compiler])),
-    'INSTALL_ARTIFACTS': ':'.join(actual_output_paths),
+    'INSTALL_ARTIFACTS': ':'.join(ctx.attr.outputs),
     'OUT_DIR': outputs[0].dirname,
+    'BUILDDIR_VARIABLE': ctx.attr.builddir_variable,
   }
 
   ctx.actions.run(
     executable = ctx.executable._builder.path,
-    arguments = [args],
+    arguments = [args] + ctx.attr.args,
     outputs = outputs,
     inputs = inputs,
     env = env | ctx.attr.env,
@@ -59,6 +56,8 @@ make = rule(
     'srcs': attr.label_list(allow_files = True),
     'env': attr.string_dict(),
     'outputs': attr.string_list(),
+    'builddir_variable': attr.string(),
+    'args': attr.string_list(),
 
     '_builder': attr.label(
       default = Label(":make.sh"),
