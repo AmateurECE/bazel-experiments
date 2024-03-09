@@ -1,0 +1,11 @@
+[settings]
+arch=armv7e-m
+arch.cpu=cortex-m4
+arch.fpu=fpv4-sp-d16
+build_type=Release
+compiler=gcc
+compiler.cppstd=gnu17
+compiler.libcxx=newlib-nano
+compiler.version=12.3
+compiler.float-abi=softfp
+os=baremetal
