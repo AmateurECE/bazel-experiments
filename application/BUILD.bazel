@@ -8,6 +8,7 @@ load(
 )
 load("//make:make.bzl", "make")
 load("@aspect_bazel_lib//lib:transitions.bzl", "platform_transition_filegroup")
+load("@bazel_skylib//rules:select_file.bzl", "select_file")
 
 linux_toolchain(
   name = "linux-toolchain-config",
@@ -45,6 +46,13 @@ kernel_build(
   cross_compile = "arm-none-linux-gnueabihf-",
 )
 
+select_file(
+  name = "zImage",
+  srcs = ":linux",
+  subpath = "zImage",
+  visibility = ["//visibility:public"]
+)
+
 uboot_build(
   name = "uboot",
   srcs = ["@u-boot//:sources"],
@@ -57,6 +65,13 @@ uboot_build(
   # exec_compatible_with = [
   #   ":kbuild_uboot",
   # ]
+)
+
+select_file(
+  name = "u-boot.bin",
+  srcs = ":uboot",
+  subpath = "u-boot.bin",
+  visibility = ["//visibility:public"]
 )
 
 make(
@@ -78,7 +93,8 @@ make(
   target_compatible_with = [
     "@platforms//os:linux",
     "@platforms//cpu:aarch32",
-  ]
+  ],
+  visibility = ["//visibility:public"],
 )
 
 make(
@@ -106,6 +122,13 @@ make(
   ],
 )
 
+select_file(
+  name = "bl2.elf",
+  srcs = ":bl2",
+  subpath = "tf-a-stm32mp157d-dk1.stm32",
+  visibility = ["//visibility:public"]
+)
+
 platform_transition_filegroup(
     name = "bl2",
     srcs = [":trusted_firmware_a"],
@@ -119,10 +142,12 @@ cc_binary(
     "@platforms//os:linux",
     "@platforms//cpu:aarch32",
   ],
+  linkopts = ["-lstdc++"],
 )
 
 # TODO: Put glibc components into a separate target.
 single_app_cpio_initrd(
   name = "rootfs",
   init = ":init",
+  visibility = ["//visibility:public"]
 )

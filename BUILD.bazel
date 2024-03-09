@@ -1,0 +1,12 @@
+load("//image:gpt.bzl", "gpt_image")
+
+gpt_image(
+  name = "demo",
+  first_stage_bootloader = "//application:bl2.elf",
+  second_stage_bootloader = "//application:u-boot.bin",
+  rootfs = [
+    "//application:optee",
+    "//application:zImage",
+    "//application:rootfs",
+  ],
+)

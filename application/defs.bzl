@@ -77,9 +77,7 @@ def uboot_build(name, image, dtb, **kwargs):
 
 def _single_app_cpio_initrd_impl(ctx):
   """Create a cpio archive with a single application (init) to run under the
-  kernel. Automatically populates libc in the archive, if the application
-  links to one, but currently cannot automatically populate other kinds of
-  dependencies."""
+  kernel."""
   archive = ctx.actions.declare_file("initrd.cpio")
 
   args = ctx.actions.args()
