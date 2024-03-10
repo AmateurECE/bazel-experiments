@@ -10,15 +10,38 @@ load("@aspect_bazel_lib//lib:transitions.bzl", "platform_transition_filegroup")
 load("@bazel_skylib//rules:select_file.bzl", "select_file")
 
 linux_toolchain(
-  name = "linux-toolchain-config",
-  # TODO: Use select() here to also be compatible with x86_64
+  name = "linux-toolchain-config-aarch64",
   target_cc_toolchain = "@arm_none_linux_gnueabihf//toolchain:cc_toolchain_linux_aarch64_arm",
 )
 
+linux_toolchain(
+  name = "linux-toolchain-config-x86_64",
+  target_cc_toolchain = "@arm_none_linux_gnueabihf//toolchain:cc_toolchain_linux_x86_64_arm",
+)
+
 toolchain(
-  name = "linux-toolchain",
-  toolchain = ":linux-toolchain-config",
+  name = "linux-toolchain-aarch64",
+  toolchain = ":linux-toolchain-config-aarch64",
   toolchain_type = "//kbuild:toolchain_type",
+  exec_compatible_with = [
+    "@platforms//cpu:aarch64",
+    "@platforms//os:linux",
+  ],
+  target_compatible_with = [
+    "@platforms//os:linux",
+    "@platforms//cpu:aarch32",
+  ],
+  visibility = ["//visibility:public"],
+)
+
+toolchain(
+  name = "linux-toolchain-x86_64",
+  toolchain = ":linux-toolchain-config-x86_64",
+  toolchain_type = "//kbuild:toolchain_type",
+  exec_compatible_with = [
+    "@platforms//cpu:x86_64",
+    "@platforms//os:linux",
+  ],
   target_compatible_with = [
     "@platforms//os:linux",
     "@platforms//cpu:aarch32",
