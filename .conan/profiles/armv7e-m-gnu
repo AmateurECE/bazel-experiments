@@ -1,0 +1,21 @@
+[settings]
+arch=armv7e-m
+arch.cpu=cortex-m4
+arch.fpu=fpv4-sp-d16
+build_type=Release
+compiler=gcc
+compiler.cppstd=gnu17
+compiler.libcxx=newlib-nano
+compiler.version=13.3
+compiler.float-abi=softfp
+os=baremetal
+
+[conf]
+tools.build:cflags=['-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16', '-mthumb', '-mfloat-abi=softfp']
+tools.build:cxxflags=['-mcpu=cortex-m4', '-mfpu=fpv4-sp-d16', '-mthumb', '-mfloat-abi=softfp']
+tools.build:compiler_executables={'c': 'arm-none-eabi-gcc', 'cpp': 'arm-none-eabi-g++'}
+tools.build.cross_building:can_run=False
+tools.cmake.cmaketoolchain:extra_variables={'CMAKE_TRY_COMPILE_TARGET_TYPE': 'STATIC_LIBRARY'}
+tools.cmake.cmaketoolchain:generator=Ninja
+tools.cmake.cmaketoolchain:system_name=Generic
+tools.cmake.cmaketoolchain:system_processor=arm

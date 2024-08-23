@@ -26,10 +26,14 @@ def _conan_config_install(repository_ctx, config):
     executable=False,
   )
 
-def _conan_install(repository_ctx, requires):
+def _conan_install(repository_ctx, requires, profile):
   _conan(
     repository_ctx,
-    ['install', '--requires={}'.format(requires), '-g', 'Bzlmod', '-d', 'bzlmod_deployer'],
+    [
+      'install', '--requires={}'.format(requires),
+      '-g', 'Bzlmod', '-d', 'bzlmod_deployer',
+      '-pr:b=default', '-pr:h={}'.format(profile),
+    ],
   )
 
 def _conan_cache_impl(repository_ctx):
@@ -42,7 +46,7 @@ def _conan_cache_impl(repository_ctx):
     _conan_config_install(repository_ctx, location)
 
   for package in repository_ctx.attr.requires:
-    _conan_install(repository_ctx, package)
+    _conan_install(repository_ctx, package, repository_ctx.attr.profile)
 
   repository_ctx.file('BUILD.bazel', executable=False)
 
@@ -51,7 +55,8 @@ conan_cache = repository_rule(
   local = True,
   attrs = {
     "config": attr.string(),
-    "requires": attr.string_list(mandatory=True)
+    "requires": attr.string_list(mandatory=True),
+    "profile": attr.string(),
   }
 )
 
@@ -61,6 +66,7 @@ def _conan_extension_impl(module_ctx):
   # options.shared=True?
   for mod in module_ctx.modules:
     requires = [p.requires for p in mod.tags.install]
+    profile = [p.profile for p in mod.tags.install]
 
     if mod.tags.config:
       config = mod.tags.config[len(mod.tags.config) - 1].install_from
@@ -73,9 +79,15 @@ def _conan_extension_impl(module_ctx):
       name="conan",
       requires=requires,
       config=config,
+      profile=profile[0],
     )
 
-install = tag_class(attrs={"requires": attr.string(mandatory=True)})
+install = tag_class(
+  attrs={
+    "requires": attr.string(mandatory=True),
+    "profile": attr.string(default="default")
+  }
+)
 config = tag_class(attrs={"install_from": attr.string()})
 conan = module_extension(
   implementation = _conan_extension_impl,

@@ -6,8 +6,8 @@
    "verify_ssl": true
   },
   {
-   "name": "metalwork",
-   "url": "https://artifactory.metalworkcpp.org/artifactory/api/conan/metalwork-conan",
+   "name": "ethantwardy",
+   "url": "https://conan.ethantwardy.com",
    "verify_ssl": true
   }
  ]
