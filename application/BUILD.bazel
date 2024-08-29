@@ -6,6 +6,7 @@ load(
   "linux_toolchain",
 )
 load("//make:make.bzl", "make")
+load("//fip:fip.bzl", "fip")
 load("@aspect_bazel_lib//lib:transitions.bzl", "platform_transition_filegroup")
 load("@bazel_skylib//rules:select_file.bzl", "select_file")
 
@@ -79,7 +80,7 @@ uboot_build(
   name = "uboot",
   srcs = ["@u-boot//:sources"],
   defconfig = "stm32mp15_defconfig",
-  image = "u-boot.bin",
+  image = "u-boot-nodtb.bin",
   # NOTE: Missing extension here is intentional.
   dtb = "stm32mp157d-dk1",
   arch = "arm",
@@ -127,6 +128,7 @@ make(
     'CROSS_COMPILE=arm-none-eabi-',
     'PLAT=stm32mp1',
     'ARCH=aarch32',
+    'AARCH32_SP=optee',
     'ARM_ARCH_MAJOR=7',
     'DTB_FILE_NAME=stm32mp157d-dk1.dtb',
     'STM32MP_SDMMC=1',
@@ -136,6 +138,7 @@ make(
   outputs = [
     "stm32mp1/release/tf-a-stm32mp157d-dk1.stm32",
     "stm32mp1/release/tf-a-stm32mp157d-dk1.map",
+    "stm32mp1/release/fdts/stm32mp157d-dk1-fw-config.dtb",
   ],
   targets = ["", "dtbs"],
   target_compatible_with = [
@@ -144,17 +147,17 @@ make(
   ],
 )
 
+platform_transition_filegroup(
+    name = "bl2",
+    srcs = [":trusted_firmware_a"],
+    target_platform = "//platforms:cortex-a7-baremetal",
+)
+
 select_file(
   name = "bl2.elf",
   srcs = ":bl2",
   subpath = "tf-a-stm32mp157d-dk1.stm32",
   visibility = ["//visibility:public"]
-)
-
-platform_transition_filegroup(
-    name = "bl2",
-    srcs = [":trusted_firmware_a"],
-    target_platform = "//platforms:cortex-a7-baremetal",
 )
 
 cc_binary(
@@ -166,4 +169,50 @@ cc_binary(
   ],
   linkopts = ["-lstdc++"],
   visibility = ["//visibility:public"],
+)
+
+select_file(
+  name = "tee-header_v2.bin",
+  srcs = ":optee",
+  subpath = "tee-header_v2.bin",
+)
+
+select_file(
+  name = "tee-pager_v2.bin",
+  srcs = ":optee",
+  subpath = "tee-pager_v2.bin",
+)
+
+select_file(
+  name = "tee-pageable_v2.bin",
+  srcs = ":optee",
+  subpath = "tee-pageable_v2.bin",
+)
+
+select_file(
+  name = "u-boot-nodtb.bin",
+  srcs = ":uboot",
+  subpath = "u-boot-nodtb.bin",
+)
+
+select_file(
+  name = "stm32mp157d-dk1-fw-config.dtb",
+  srcs = ":bl2",
+  subpath = "stm32mp157d-dk1-fw-config.dtb",
+)
+
+select_file(
+  name = "u-boot.dtb",
+  srcs = ":uboot",
+  subpath = "u-boot.dtb",
+)
+
+fip(
+  name = "fip",
+  tos_fw = ":tee-header_v2.bin",
+  tos_fw_extra1 = ":tee-pager_v2.bin",
+  tos_fw_extra2 = ":tee-pageable_v2.bin",
+  nt_fw = ":u-boot-nodtb.bin",
+  fw_config = ":stm32mp157d-dk1-fw-config.dtb",
+  hw_config = ":u-boot.dtb",
 )

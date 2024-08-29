@@ -1,0 +1,9 @@
+load("//make:make.bzl", "make_binary")
+
+make_binary(
+  name = "fiptool",
+  srcs = ["@bl2//:sources"],
+  executable = "tools/fiptool/fiptool",
+  target = "fiptool",
+)
+
