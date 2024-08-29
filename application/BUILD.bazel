@@ -111,7 +111,7 @@ make(
     'core/tee-pager_v2.bin',
     'core/tee-pageable_v2.bin',
   ],
-  target = "all",
+  targets = ["all"],
   target_compatible_with = [
     "@platforms//os:linux",
     "@platforms//cpu:aarch32",
@@ -137,7 +137,7 @@ make(
     "stm32mp1/release/tf-a-stm32mp157d-dk1.stm32",
     "stm32mp1/release/tf-a-stm32mp157d-dk1.map",
   ],
-  target = "",
+  targets = ["", "dtbs"],
   target_compatible_with = [
     "@platforms//os:none",
     "@platforms//cpu:aarch32",
