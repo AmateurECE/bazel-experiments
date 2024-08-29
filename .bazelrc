@@ -2,14 +2,7 @@
 # https://bazel.build/extending/platforms#specifying-build-platform
 build --platforms=//platforms:cortex-a7-linux
 
-# This flag won't be enabled by default until Bazel 7. See:
-# https://github.com/bazelbuild/bazel/issues/7260
-build --incompatible_enable_cc_toolchain_resolution
-
 # Required so that run actions can use default shell environments AND
 # environment variables set by the action. See:
 # https://bazel.build/rules/lib/builtins/actions.html#run
 build --incompatible_merge_fixed_and_default_shell_env
-
-# Still needed in 6.4.0 to enable bzlmod extensions!
-build --enable_bzlmod=true
