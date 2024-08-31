@@ -65,7 +65,7 @@ http_archive(
   strip_prefix='optee_os-3712e94c4728c70b7fd99af4031d51201b05a1cc',
   patch_args = ["-p1"],
   patches = [
-    "//application:0001-Fix-enum-int-mismatch.patch",
+    "//board:0001-Fix-enum-int-mismatch.patch",
   ]
 )
 
