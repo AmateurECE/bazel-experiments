@@ -1,4 +1,4 @@
-load("//kbuild:kbuild.bzl", "kbuild_target", "KbuildToolchainInfo")
+load("//make:kbuild.bzl", "kbuild_target", "KbuildToolchainInfo")
 load("//:common.bzl", "hermetic_tool_path")
 load("@rules_cc//cc:defs.bzl", "cc_common")
 load("@rules_cc//cc:action_names.bzl", "ACTION_NAMES")

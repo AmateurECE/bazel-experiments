@@ -15,32 +15,23 @@ def _kbuild_target_impl(ctx):
   generated artifacts to the output directory.
   """
   toolchain = ctx.toolchains[":toolchain_type"].kbuild_toolchain_info
-  root_directory = detect_root(ctx.files.srcs)
-  config = ctx.actions.declare_file(ctx.attr.name + ".cfg")
-
+  source = detect_root(ctx.files.srcs)
   inputs = ctx.files.srcs + toolchain.hermetic_tools
 
-  outputs = [config]
-  for name in ctx.attr.artifacts.values():
-    outputs.append(ctx.actions.declare_file(name, sibling=config))
+  outputs = [ctx.actions.declare_file(name) for name in ctx.attr.artifacts.values()]
 
   args = ctx.actions.args()
-  args.add("-C", root_directory)
-  args.add(ctx.attr.defconfig)
-  args.add(ctx.attr.all_target)
+  args.add('ARCH={}'.format(ctx.attr.arch))
+  args.add('CROSS_COMPILE={}'.format(ctx.attr.cross_compile))
 
   env = {
-    # Standard kbuild stuff
-    'ARCH': ctx.attr.arch,
-    'CROSS_COMPILE': ctx.attr.cross_compile,
-
-    # Tools
     'HERMETIC_TOOL_PATH': ':'.join(toolchain.hermetic_tool_path),
-
-    # Instructions for kbuild.sh
-    'NAME': ctx.attr.name,
-    'OUT_DIR': config.dirname,
-    'ARTIFACTS': ':'.join(ctx.attr.artifacts.keys()),
+    'INSTALL_ARTIFACTS': ':'.join(ctx.attr.artifacts.keys()),
+    # NOTE: Add an extra ":" at the end. This is needed when all_target is ""
+    'MAKE_TARGETS': ':'.join([ctx.attr.defconfig, ctx.attr.all_target]) + ":",
+    'OUT_DIR': outputs[0].dirname,
+    'BUILDDIR_VARIABLE': 'O',
+    'SRC_DIR': source,
   }
 
   ctx.actions.run(
@@ -65,7 +56,7 @@ kbuild_target = rule(
     # Standard kbuild parameters
     'srcs': attr.label_list(allow_files = True),
     'defconfig': attr.string(mandatory = True),
-    'all_target': attr.string(),
+    'all_target': attr.string(default = ""),
     'arch': attr.string(),
     'cross_compile': attr.string(),
 
@@ -74,7 +65,7 @@ kbuild_target = rule(
 
     # Tools
     '_builder': attr.label(
-      default = Label(':kbuild.sh'),
+      default = Label(':make.sh'),
       cfg = "exec",
       executable = True,
       allow_files = True,

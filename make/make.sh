@@ -5,6 +5,9 @@ set -e
 
 printenv
 
+# Some scripts require HOME to be set.
+export HOME=$PWD
+
 IFS=:; set -o noglob
 for path in $HERMETIC_TOOL_PATH; do
   export PATH="$(realpath $path):$PATH"
@@ -21,7 +24,8 @@ else
   BUILD_DIR=$SRC_DIR
 fi
 
-IFS=":"; for target in $MAKE_TARGETS; do
+IFS=":"; set -o noglob
+for target in $MAKE_TARGETS; do
   make $BUILD_SPECIFICATION -j$(nproc) -l$(nproc) -C $SRC_DIR $@ $target
 done
 
