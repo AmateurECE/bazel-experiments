@@ -1,0 +1,18 @@
+Disable manpage generation
+
+Currently, manpage generation requires manually running po4a after
+running `make` and before `make install`. We can't count on this
+tool to be available on the host at build time, and I really don't
+want to make a hermetic po4a toolchain. Also, rules_foreign_cc
+doesn't allow to insert additional actions between make commands
+anyways. So, simply remove the doc subdirectory from the tree.
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -1,6 +1,6 @@
+ AUTOMAKE_OPTIONS=foreign
+ ACLOCAL_AMFLAGS = -I build-aux
+-SUBDIRS=doc scripts test
++SUBDIRS=scripts test
+ 
+ noinst_LTLIBRARIES = libcommunicate.la libmacosx.la libfakeroot_time64.la
+ libcommunicate_la_SOURCES = communicate.c

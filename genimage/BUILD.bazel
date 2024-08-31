@@ -1,0 +1,94 @@
+##############################################################################
+# Genimage tool
+###
+
+load("@rules_foreign_cc//foreign_cc:configure.bzl", "configure_make")
+load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
+load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "pkg_attributes")
+load("@bazel_skylib//rules:select_file.bzl", "select_file")
+
+LIBCONFUSE_SONAME = "libconfuse.so.2"
+
+configure_make(
+  name = "fakeroot-build",
+  autoreconf = True,
+  autoreconf_options = ["-fi"],
+  configure_in_place = True,
+  configure_options = ["--with-ipc=tcp"],
+  lib_source = "@fakeroot//:sources",
+  out_shared_libs = ["libfakeroot.so"],
+  out_binaries = ["fakeroot", "faked"],
+)
+
+configure_make(
+  name = "libconfuse-build",
+  autogen = True,
+  configure_in_place = True,
+  lib_source = "@libconfuse//:sources",
+  out_shared_libs = [LIBCONFUSE_SONAME],
+)
+
+configure_make(
+  name = "genimage-build",
+  autogen = True,
+  configure_in_place = True,
+  lib_source = "@genimage//:sources",
+  out_binaries = ["genimage"],
+  deps = [":libconfuse-build"],
+  postfix_script = "patchelf --set-rpath '$ORIGIN/../lib' $$INSTALLDIR$$/bin/genimage",
+)
+
+select_file(
+  name = "libconfuse.so",
+  srcs = ":libconfuse-build",
+  subpath = LIBCONFUSE_SONAME,
+)
+
+select_file(
+  name = "libfakeroot.so",
+  srcs = ":fakeroot-build",
+  subpath = "libfakeroot.so",
+)
+
+pkg_files(
+  name = "libraries",
+  srcs = [":libconfuse.so", ":libfakeroot.so"],
+  prefix = "genimage/lib",
+  attributes = pkg_attributes(
+    mode = "0755",
+  ),
+)
+
+select_file(
+  name = "faked",
+  srcs = ":fakeroot-build",
+  subpath = "faked",
+)
+
+select_file(
+  name = "fakeroot",
+  srcs = ":fakeroot-build",
+  subpath = "fakeroot",
+)
+
+select_file(
+  name = "genimage",
+  srcs = ":genimage-build",
+  subpath = "genimage",
+)
+
+pkg_files(
+  name = "binaries",
+  srcs = [":faked", ":fakeroot", ":genimage"],
+  prefix = "genimage/bin",
+  attributes = pkg_attributes(
+    mode = "0755",
+  ),
+)
+
+pkg_tar(
+    name = "toolchain",
+    srcs = [":libraries", ":binaries"],
+    out = "toolchain.tar.gz",
+    extension = ".gz",
+)

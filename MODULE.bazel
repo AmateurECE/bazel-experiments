@@ -81,3 +81,48 @@ http_archive(
   sha256='95dafdc38190f8d83e6216d50dd1e28a0d3dcf05eb12a76a68780892216b30a4',
   strip_prefix='arm-trusted-firmware-03e5c7e8e059d7c3b1267a2d48d32845e0a40e40',
 )
+
+##############################################################################
+# Genimage tool
+###
+
+bazel_dep(name = "rules_pkg", version = "1.0.1")
+bazel_dep(name = "rules_foreign_cc", version = "0.12.0")
+
+http_archive(
+  name = "fakeroot",
+  build_file_content = _BUILD_SOURCES,
+  url='https://salsa.debian.org/clint/fakeroot/-/archive/upstream/1.36/fakeroot-upstream-1.36.tar.gz',
+  sha256='5128dd5df59955d60453aea1817d2f31c29ffb8b8addcc5d7e200460278a6b0a',
+  strip_prefix='fakeroot-upstream-1.36',
+  patches = ["//genimage:0001-fakeroot-Disable-manpages.patch"],
+  patch_args = ["-p1"],
+)
+
+http_archive(
+  name = "libconfuse",
+  build_file_content = _BUILD_SOURCES,
+  url='https://github.com/libconfuse/libconfuse/archive/refs/tags/v3.3.tar.gz',
+  sha256='cb90c06f2dbec971792af576d5b9a382fb3c4ca2b1deea55ea262b403f4e641e',
+  strip_prefix='libconfuse-3.3',
+)
+
+http_archive(
+  name = "genimage",
+  build_file_content = _BUILD_SOURCES,
+  url='https://github.com/pengutronix/genimage/archive/refs/tags/v18.tar.gz',
+  sha256='af555b9d9f17301ab4cc2cda4849afd88d2b97ae4cc8badb9b8448299d6f6080',
+  strip_prefix='genimage-18',
+)
+
+_GENIMAGE_TOOLCHAIN = """
+exports_files(glob(["bin/**", "lib/**"]))
+"""
+
+http_archive(
+  name = "rules_genimage",
+  build_file_content = _GENIMAGE_TOOLCHAIN,
+  url='https://static.ethantwardy.com/genimage/latest/genimage-toolchain-gcc-linux-aarch64.tar.gz',
+  sha256='18ac76d136261be72b95a5e933d832449d050fa27f0f1c531226ba778980729b',
+  strip_prefix='genimage',
+)

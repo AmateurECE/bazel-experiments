@@ -1,5 +1,7 @@
 load("//make:make.bzl", "make_binary")
 
+# TODO: This uses the host toolchain, but it wouldn't work with a hermetic
+# host toolchain.
 make_binary(
   name = "fiptool",
   srcs = ["@bl2//:sources"],

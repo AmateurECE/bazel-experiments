@@ -9,6 +9,7 @@ load("//make:make.bzl", "make")
 load("//fip:fip.bzl", "fip")
 load("@aspect_bazel_lib//lib:transitions.bzl", "platform_transition_filegroup")
 load("@bazel_skylib//rules:select_file.bzl", "select_file")
+load("//genimage:genimage.bzl", "hdimage")
 
 linux_toolchain(
   name = "linux-toolchain-config-aarch64",
@@ -154,10 +155,9 @@ platform_transition_filegroup(
 )
 
 select_file(
-  name = "bl2.elf",
+  name = "tf-a-stm32mp157d-dk1.stm32",
   srcs = ":bl2",
   subpath = "tf-a-stm32mp157d-dk1.stm32",
-  visibility = ["//visibility:public"]
 )
 
 cc_binary(
@@ -208,11 +208,37 @@ select_file(
 )
 
 fip(
-  name = "fip",
+  name = "fip.bin",
   tos_fw = ":tee-header_v2.bin",
   tos_fw_extra1 = ":tee-pager_v2.bin",
   tos_fw_extra2 = ":tee-pageable_v2.bin",
   nt_fw = ":u-boot-nodtb.bin",
   fw_config = ":stm32mp157d-dk1-fw-config.dtb",
   hw_config = ":u-boot.dtb",
+)
+
+hdimage(
+  name = "sdcard.img",
+  partition_table_type = "gpt",
+  fsbl1 = {
+    'image': ":tf-a-stm32mp157d-dk1.stm32",
+  },
+  fsbl2 = {
+    'image': ":tf-a-stm32mp157d-dk1.stm32",
+  },
+  fip = {
+    'image': ":fip.bin",
+  },
+  u_boot_env = {
+    # Matches CONFIG_ENV_OFFSET in U-Boot
+    'offset': '0x900000',
+    # Matches CONFIG_ENV_SIZE in U-Boot
+    'size': '0x2000',
+  },
+  u_boot_env_red = {
+    # Matches CONFIG_ENV_OFFSET_REDUND in U-Boot
+    'offset': '0x940000',
+    # Matches CONFIG_ENV_SIZE in U-Boot
+    'size': '0x2000',
+  },
 )
