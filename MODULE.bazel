@@ -1,11 +1,6 @@
 bazel_dep(name = "rules_cc", version = "0.0.9")
 bazel_dep(name = "aspect_bazel_lib", version = "2.5.1")
 
-register_toolchains(
-  "//application:linux-toolchain-x86_64",
-  "//application:linux-toolchain-aarch64",
-)
-
 ##############################################################################
 # ARM toolchain
 ###
