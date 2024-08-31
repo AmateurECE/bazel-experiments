@@ -18,8 +18,7 @@ def _kbuild_target_impl(ctx):
   root_directory = detect_root(ctx.files.srcs)
   config = ctx.actions.declare_file(ctx.attr.name + ".cfg")
 
-  inputs = ctx.files.srcs + ctx.files.additional_inputs \
-      + toolchain.hermetic_tools
+  inputs = ctx.files.srcs + toolchain.hermetic_tools
 
   outputs = [config]
   for name in ctx.attr.artifacts.values():
@@ -43,10 +42,6 @@ def _kbuild_target_impl(ctx):
     'OUT_DIR': config.dirname,
     'ARTIFACTS': ':'.join(ctx.attr.artifacts.keys()),
   }
-
-  for key, value in ctx.attr.additional_config.items():
-    env[key] = value
-  env['CONFIG'] = ':'.join(ctx.attr.additional_config.keys())
 
   ctx.actions.run(
     mnemonic = ctx.attr.name + "Kbuild",
@@ -76,8 +71,6 @@ kbuild_target = rule(
 
     # Attributes from the calling macro
     'artifacts': attr.string_dict(),
-    'additional_inputs': attr.label_list(),
-    'additional_config': attr.string_dict(),
 
     # Tools
     '_builder': attr.label(
