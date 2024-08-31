@@ -59,15 +59,18 @@ toolchain(
 #   constraint_setting = ":kbuild_flavor",
 # )
 
-kernel_build(
+make(
   name = "linux",
   srcs = ["@linux//:sources"],
-  defconfig = "multi_v7_defconfig",
-  image = "zImage",
-  dtb = "stm32mp157d-dk1.dtb",
-  # TODO: Should be possible to pull these from CcToolchain?
-  arch = "arm",
-  cross_compile = "arm-none-linux-gnueabihf-",
+  targets = ["multi_v7_defconfig", ""],
+  outputs = [
+    "arch/arm/boot/zImage",
+    "arch/arm/boot/dts/stm32mp157d-dk1.dtb",
+  ],
+  args = [
+    "ARCH=arm",
+    "CROSS_COMPILE=arm-none-linux-gnueabihf-",
+  ],
 )
 
 select_file(
@@ -80,18 +83,19 @@ select_file(
 # Commands to build a working U-boot:
 # make CROSS_COMPILE=arm-unknown-linux-gnueabi- ARCH=arm stm32mp15_defconfig
 # make CROSS_COMPILE=arm-unknown-linux-gnueabi- ARCH=arm DEVICE_TREE=stm32mp157a-dk1 all
-uboot_build(
+make(
   name = "uboot",
   srcs = ["@u-boot//:sources"],
-  defconfig = "stm32mp15_defconfig",
-  image = "u-boot-nodtb.bin",
-  # NOTE: Missing extension here is intentional.
-  dtb = "stm32mp157a-dk1",
-  arch = "arm",
-  cross_compile = "arm-none-linux-gnueabihf-",
-  # exec_compatible_with = [
-  #   ":kbuild_uboot",
-  # ]
+  targets = ["stm32mp15_defconfig", "all"],
+  outputs = [
+    "u-boot-nodtb.bin",
+    "u-boot.dtb",
+  ],
+  args = [
+    "DEVICE_TREE=stm32mp157a-dk1",
+    "ARCH=arm",
+    "CROSS_COMPILE=arm-none-linux-gnueabihf-",
+  ],
 )
 
 select_file(

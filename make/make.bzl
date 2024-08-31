@@ -23,7 +23,8 @@ def _make_common_action(ctx, targets, built_artifacts, rule_outputs):
   env = {
     'HERMETIC_TOOL_PATH': ':'.join(hermetic_tool_path([compiler])),
     'INSTALL_ARTIFACTS': ':'.join(built_artifacts),
-    'MAKE_TARGETS': ':'.join(targets),
+    # NOTE: Add an extra ":" at the end. This is needed when all_target is ""
+    'MAKE_TARGETS': ':'.join(targets) + ":",
     'OUT_DIR': rule_outputs[0].dirname,
     'BUILDDIR_VARIABLE': ctx.attr.builddir_variable,
     'SRC_DIR': source,
