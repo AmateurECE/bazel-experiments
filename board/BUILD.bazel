@@ -2,7 +2,6 @@ load("@bazel_skylib//rules:select_file.bzl", "select_file")
 load("//make:make.bzl", "make")
 load("//fip:fip.bzl", "fip")
 load("//genimage:genimage.bzl", "hdimage")
-load("//image:initrd.bzl", "cpio_image")
 
 ##############################################################################
 # Bootchain software
@@ -174,12 +173,4 @@ hdimage(
     # Matches CONFIG_ENV_SIZE in U-Boot
     'size': '0x2000',
   },
-)
-
-# TODO: Put glibc components into a separate target.
-cpio_image(
-  name = "rootfs",
-  srcs = [
-    "//application:init",
-  ],
 )
