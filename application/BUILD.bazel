@@ -77,13 +77,16 @@ select_file(
   visibility = ["//visibility:public"]
 )
 
+# Commands to build a working U-boot:
+# make CROSS_COMPILE=arm-unknown-linux-gnueabi- ARCH=arm stm32mp15_defconfig
+# make CROSS_COMPILE=arm-unknown-linux-gnueabi- ARCH=arm DEVICE_TREE=stm32mp157a-dk1 all
 uboot_build(
   name = "uboot",
   srcs = ["@u-boot//:sources"],
   defconfig = "stm32mp15_defconfig",
   image = "u-boot-nodtb.bin",
   # NOTE: Missing extension here is intentional.
-  dtb = "stm32mp157d-dk1",
+  dtb = "stm32mp157a-dk1",
   arch = "arm",
   cross_compile = "arm-none-linux-gnueabihf-",
   # exec_compatible_with = [
