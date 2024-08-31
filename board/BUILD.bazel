@@ -7,23 +7,6 @@ load("//genimage:genimage.bzl", "hdimage")
 # Bootchain software
 ###
 
-make(
-  name = "linux",
-  srcs = ["@linux//:sources"],
-  targets = ["multi_v7_defconfig", ""],
-  outputs = [
-    "arch/arm/boot/zImage",
-    "arch/arm/boot/dts/stm32mp157d-dk1.dtb",
-  ],
-  args = [
-    "ARCH=arm",
-    "CROSS_COMPILE=arm-none-linux-gnueabihf-",
-  ],
-  target_compatible_with = [
-    "@platforms//cpu:aarch32",
-  ],
-)
-
 # Commands to build a working U-boot:
 # make CROSS_COMPILE=arm-unknown-linux-gnueabi- ARCH=arm stm32mp15_defconfig
 # make CROSS_COMPILE=arm-unknown-linux-gnueabi- ARCH=arm DEVICE_TREE=stm32mp157a-dk1 all
