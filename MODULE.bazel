@@ -29,37 +29,39 @@ filegroup(
 http_archive(
   name = "linux",
   build_file_content = _BUILD_SOURCES,
-  url='https://github.com/STMicroelectronics/linux/archive/b3464dcb76176a9284c524219ae7444a177cf399.tar.gz',
-  sha256='fff18b5d14e648e8b300daebe99f20e61021b245c8413cb7b26e10ad796e3b48',
-  strip_prefix='linux-b3464dcb76176a9284c524219ae7444a177cf399',
+  url='https://github.com/STMicroelectronics/linux/archive/v6.1-stm32mp-r2.tar.gz',
+  sha256='1f39d24016c2cb88baa3c68165d9ef985e56be43c3273760e7427418d3da354f',
+  strip_prefix='linux-6.1-stm32mp-r2',
 )
 
 http_archive(
   name = "u-boot",
   build_file_content = _BUILD_SOURCES,
-  url='https://github.com/STMicroelectronics/u-boot/archive/ae5922ad8322eca72e883e2d809257d5606659fd.tar.gz',
-  sha256='5df837d87c55000c0690ffabe40d2836a60b913b75732d9afe69f85cfb737ce7',
-  strip_prefix='u-boot-ae5922ad8322eca72e883e2d809257d5606659fd',
+  url='https://github.com/STMicroelectronics/u-boot/archive/refs/tags/v2022.10-stm32mp-r2.tar.gz',
+  sha256='ff26640bca2d5ef310135da4dda7761fdf5c296fdf22cfca3ac858261364582b',
+  strip_prefix='u-boot-2022.10-stm32mp-r2',
 )
 
 http_archive(
   name = "optee",
   build_file_content = _BUILD_SOURCES,
-  url='https://github.com/STMicroelectronics/optee_os/archive/3712e94c4728c70b7fd99af4031d51201b05a1cc.tar.gz',
-  sha256='535ecb043d03639a2045a62f113d7b7ad3253162b5a2a283ebb792078d546f35',
-  strip_prefix='optee_os-3712e94c4728c70b7fd99af4031d51201b05a1cc',
+  url='https://github.com/STMicroelectronics/optee_os/archive/refs/tags/3.16.0-stm32mp-r2.2.tar.gz',
+  sha256='27df8ce07edb47a19de76f6f68d3795929c47ee5a08ca5c4c54fa1ec779c8f70',
+  strip_prefix='optee_os-3.16.0-stm32mp-r2.2',
   patch_args = ["-p1"],
   patches = [
-    "//board:0001-Fix-enum-int-mismatch.patch",
-  ]
+    "//board:0001-pkcs11-Fix-function-parameter-type-mismatch.patch",
+    "//board:0002-arm-mm-Fix-function-parameter-type-mismatch.patch",
+    "//board:0003-arm-kernel-Explicitly-disable-execstack.patch",
+  ],
 )
 
 http_archive(
   name = "bl2",
   build_file_content = _BUILD_SOURCES,
-  url='https://github.com/STMicroelectronics/arm-trusted-firmware/archive/03e5c7e8e059d7c3b1267a2d48d32845e0a40e40.tar.gz',
-  sha256='95dafdc38190f8d83e6216d50dd1e28a0d3dcf05eb12a76a68780892216b30a4',
-  strip_prefix='arm-trusted-firmware-03e5c7e8e059d7c3b1267a2d48d32845e0a40e40',
+  url='https://github.com/STMicroelectronics/arm-trusted-firmware/archive/refs/tags/v2.8-stm32mp-r2.tar.gz',
+  sha256='9f50647299a083324bf6394d0c315b60a2a8a716b8ec059bbd12a81d7ab3078a',
+  strip_prefix='arm-trusted-firmware-2.8-stm32mp-r2',
 )
 
 ##############################################################################

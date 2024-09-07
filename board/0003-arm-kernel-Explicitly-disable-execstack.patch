@@ -1,0 +1,10 @@
+--- a/core/arch/arm/kernel/link.mk
++++ b/core/arch/arm/kernel/link.mk
+@@ -25,6 +25,7 @@
+ link-ldflags += --sort-section=alignment
+ link-ldflags += --fatal-warnings
+ link-ldflags += --gc-sections
++link-ldflags += -z noexecstack
+ 
+ link-ldadd  = $(LDADD)
+ link-ldadd += $(ldflags-external)

@@ -9,6 +9,7 @@ load("@bazel_skylib//rules:select_file.bzl", "select_file")
 
 LIBCONFUSE_SONAME = "libconfuse.so.2"
 
+# TODO: fakeroot depends on libcap, which must currently be installed on the host.
 configure_make(
   name = "fakeroot-build",
   autoreconf = True,
