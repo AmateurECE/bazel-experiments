@@ -1,6 +1,7 @@
 # Otherwise, Bazel will attempt to build for the local platform. See:
 # https://bazel.build/extending/platforms#specifying-build-platform
 build --platforms=//platforms:cortex-a7-linux
+build --platforms=//platforms:cortex-m4
 
 # Required so that run actions can use default shell environments AND
 # environment variables set by the action. See:

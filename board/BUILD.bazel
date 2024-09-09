@@ -1,11 +1,8 @@
-load("@bazel_skylib//rules:select_file.bzl", "select_file")
-load("//make:make.bzl", "make")
-load("//fip:fip.bzl", "fip")
-load("//genimage:genimage.bzl", "hdimage")
-
 ##############################################################################
 # Bootchain software
 ###
+
+load("//make:make.bzl", "make")
 
 # Commands to build a working U-boot:
 # make CROSS_COMPILE=arm-unknown-linux-gnueabi- ARCH=arm stm32mp15_defconfig
@@ -80,6 +77,11 @@ make(
 # Packaging Images
 ###
 
+load("@bazel_skylib//rules:select_file.bzl", "select_file")
+load("//fip:fip.bzl", "fip")
+load("//genimage:genimage.bzl", "hdimage")
+load("@aspect_bazel_lib//lib:transitions.bzl", "platform_transition_filegroup")
+
 select_file(
   name = "tee-header_v2.bin",
   srcs = ":optee",
@@ -133,7 +135,7 @@ select_file(
 )
 
 hdimage(
-  name = "sdcard.img",
+  name = "image",
   partition_table_type = "gpt",
   fsbl1 = {
     'image': ":tf-a-stm32mp157d-dk1.stm32",
@@ -156,4 +158,10 @@ hdimage(
     # Matches CONFIG_ENV_SIZE in U-Boot
     'size': '0x2000',
   },
+)
+
+platform_transition_filegroup(
+  name = "sdcard.img",
+  srcs = [":image"],
+  target_platform = "//platforms:cortex-a7-linux",
 )

@@ -1,0 +1,18 @@
+##############################################################################
+# Binary Targets
+##
+
+load("@rules_rust//rust:defs.bzl", "rust_binary")
+load("@aspect_bazel_lib//lib:transitions.bzl", "platform_transition_filegroup")
+
+rust_binary(
+  name = "panic",
+  srcs = ["main.rs"],
+  platform = "//platforms:cortex-m4",
+)
+
+platform_transition_filegroup(
+  name = "panic.elf",
+  srcs = [":panic"],
+  target_platform = "//platforms:cortex-m4",
+)
